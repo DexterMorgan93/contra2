@@ -12,7 +12,7 @@ class Game {
 
     this.hero = new Hero();
     this.hero.x = 200;
-    this.hero.y = 200;
+    this.hero.y = 100;
     this.pixiApp.stage.addChild(this.hero);
 
     const platform1 = new Platform();
@@ -27,7 +27,7 @@ class Game {
 
     const platform3 = new Platform();
     platform3.x = 500;
-    platform3.y = 500;
+    platform3.y = 400;
     this.pixiApp.stage.addChild(platform3);
 
     this.platforms.push(platform1);
@@ -40,15 +40,17 @@ class Game {
       y: this.hero.y,
       x: this.hero.x,
     }; // храним предыдущее знаение героя
+
     this.hero.update();
 
     // пробегаемся по всем платформам и останавливаем героя при коллизии
-    for (let i = 0; i < this.platforms.length; i++) {
-      /* Если столкновения больше нет: Это означает, что проблема была вызвана вертикальным перемещением героя.
+    /* Если столкновения больше нет: Это означает, что проблема была вызвана вертикальным перемещением героя.
          В этом случае вертикальное смещение отменяется (возвращается к прежнему значению), а горизонтальное перемещение остаётся.
          Если столкновение всё ещё обнаруживается:
          Это указывает на то, что именно горизонтальное движение привело к столкновению.
          огда герой возвращается по горизонтали, то есть его x откатывается до prevPoint.x, а значение y возвращается к currY. */
+
+    for (let i = 0; i < this.platforms.length; i++) {
       if (!this.isCheckAABB(this.hero, this.platforms[i])) {
         continue;
       }
@@ -56,6 +58,7 @@ class Game {
       const currY = this.hero.y;
       this.hero.y = prevPoint.y;
       if (!this.isCheckAABB(this.hero, this.platforms[i])) {
+        this.hero.stay();
         continue;
       }
 

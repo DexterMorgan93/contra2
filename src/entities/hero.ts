@@ -1,7 +1,9 @@
 import { Container, Graphics } from "pixi.js";
 
 class Hero extends Container {
-  public gravityForce = 1;
+  private gravityForce = 0.1;
+  private velocityX = 0;
+  private velocityY = 0;
 
   constructor() {
     super();
@@ -16,9 +18,13 @@ class Hero extends Container {
   }
 
   update() {
-    // движение вниз и направо
-    this.y += this.gravityForce;
-    this.x += this.gravityForce;
+    // движение вниз
+    this.velocityY += this.gravityForce; // скорость становится больше
+    this.y += this.velocityY;
+  }
+
+  stay() {
+    this.velocityY = 0;
   }
 }
 
