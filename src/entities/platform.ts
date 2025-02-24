@@ -8,7 +8,7 @@ class Platform extends Container {
       width: 2,
       color: 0x00ff00,
     });
-    view.rect(0, 0, 20, 60);
+    view.rect(0, 0, 90, 20);
     view.stroke();
     this.addChild(view);
   }
