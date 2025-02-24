@@ -5,20 +5,34 @@ import { Platform } from "./entities/platform";
 class Game {
   private pixiApp;
   private hero;
-  private platform;
+  private platforms: Container[] = [];
 
   constructor(pixiApp: Application) {
     this.pixiApp = pixiApp;
 
     this.hero = new Hero();
     this.hero.x = 200;
-    this.hero.y = 300;
+    this.hero.y = 200;
     this.pixiApp.stage.addChild(this.hero);
 
-    this.platform = new Platform();
-    this.platform.x = 150;
-    this.platform.y = 500;
-    this.pixiApp.stage.addChild(this.platform);
+    const platform1 = new Platform();
+    platform1.x = 150;
+    platform1.y = 400;
+    this.pixiApp.stage.addChild(platform1);
+
+    const platform2 = new Platform();
+    platform2.x = 300;
+    platform2.y = 500;
+    this.pixiApp.stage.addChild(platform2);
+
+    const platform3 = new Platform();
+    platform3.x = 500;
+    platform3.y = 500;
+    this.pixiApp.stage.addChild(platform3);
+
+    this.platforms.push(platform1);
+    this.platforms.push(platform2);
+    this.platforms.push(platform3);
   }
 
   update() {
@@ -28,8 +42,25 @@ class Game {
     }; // храним предыдущее знаение героя
     this.hero.update();
 
-    if (this.isCheckAABB(this.hero, this.platform)) {
+    // пробегаемся по всем платформам и останавливаем героя при коллизии
+    for (let i = 0; i < this.platforms.length; i++) {
+      /* Если столкновения больше нет: Это означает, что проблема была вызвана вертикальным перемещением героя.
+         В этом случае вертикальное смещение отменяется (возвращается к прежнему значению), а горизонтальное перемещение остаётся.
+         Если столкновение всё ещё обнаруживается:
+         Это указывает на то, что именно горизонтальное движение привело к столкновению.
+         огда герой возвращается по горизонтали, то есть его x откатывается до prevPoint.x, а значение y возвращается к currY. */
+      if (!this.isCheckAABB(this.hero, this.platforms[i])) {
+        continue;
+      }
+
+      const currY = this.hero.y;
       this.hero.y = prevPoint.y;
+      if (!this.isCheckAABB(this.hero, this.platforms[i])) {
+        continue;
+      }
+
+      this.hero.y = currY;
+      this.hero.x = prevPoint.x;
     }
   }
 

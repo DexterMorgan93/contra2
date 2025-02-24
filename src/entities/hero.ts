@@ -16,7 +16,9 @@ class Hero extends Container {
   }
 
   update() {
+    // движение вниз и направо
     this.y += this.gravityForce;
+    this.x += this.gravityForce;
   }
 }
 
