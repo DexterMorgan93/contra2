@@ -1,11 +1,13 @@
 import { Application, Container } from "pixi.js";
 import { Hero } from "./entities/hero";
 import { PlatformFactory } from "./entities/platforms/platform-factory";
+import { KeyboardProcessor } from "./keyboard-processor";
 
 class Game {
   private pixiApp;
   private hero;
   private platforms: Container[] = [];
+  public keyboardProcessor: KeyboardProcessor;
 
   constructor(pixiApp: Application) {
     this.pixiApp = pixiApp;
@@ -19,6 +21,24 @@ class Game {
     this.platforms.push(platformFactory.createPlatform(150, 400));
     this.platforms.push(platformFactory.createPlatform(300, 500));
     this.platforms.push(platformFactory.createPlatform(500, 400));
+
+    this.keyboardProcessor = new KeyboardProcessor(this);
+
+    this.keyboardProcessor.getButton(" ").executeDown = () => {
+      this.hero.jump();
+    };
+    this.keyboardProcessor.getButton("a").executeDown = () => {
+      this.hero.startLeftMove();
+    };
+    this.keyboardProcessor.getButton("a").executeUp = () => {
+      this.hero.stopLeftMove();
+    };
+    this.keyboardProcessor.getButton("d").executeDown = () => {
+      this.hero.startRightMove();
+    };
+    this.keyboardProcessor.getButton("d").executeUp = () => {
+      this.hero.stopRightMove();
+    };
   }
 
   update() {
@@ -61,27 +81,6 @@ class Game {
       entity.y < area.y + area.height &&
       entity.y + entity.height > area.y
     );
-  }
-
-  onKeyDown(key: string) {
-    if (key === "a") {
-      this.hero.startLeftMove();
-    }
-    if (key === "d") {
-      this.hero.startRightMove();
-    }
-    if (key === " ") {
-      this.hero.jump();
-    }
-  }
-
-  onKeyUp(key: string) {
-    if (key === "a") {
-      this.hero.stopLeftMove();
-    }
-    if (key === "d") {
-      this.hero.stopRightMove();
-    }
   }
 }
 

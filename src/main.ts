@@ -17,10 +17,10 @@ async function setup() {
   app.ticker.add(game.update, game);
 
   document.addEventListener("keydown", e => {
-    game.onKeyDown(e.key);
+    game.keyboardProcessor.onKeyDown(e.key);
   });
   document.addEventListener("keyup", e => {
-    game.onKeyUp(e.key);
+    game.keyboardProcessor.onKeyUp(e.key);
   });
 })();
 
