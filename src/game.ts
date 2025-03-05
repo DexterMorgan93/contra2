@@ -1,6 +1,6 @@
 import { Application, Container } from "pixi.js";
 import { Hero } from "./entities/hero";
-import { Platform } from "./entities/platform";
+import { PlatformFactory } from "./entities/platforms/platform-factory";
 
 class Game {
   private pixiApp;
@@ -14,21 +14,11 @@ class Game {
     this.hero.position.set(200, 100);
     this.pixiApp.stage.addChild(this.hero);
 
-    const platform1 = new Platform();
-    platform1.position.set(150, 400);
-    this.pixiApp.stage.addChild(platform1);
+    const platformFactory = new PlatformFactory(this.pixiApp);
 
-    const platform2 = new Platform();
-    platform2.position.set(300, 500);
-    this.pixiApp.stage.addChild(platform2);
-
-    const platform3 = new Platform();
-    platform3.position.set(500, 400);
-    this.pixiApp.stage.addChild(platform3);
-
-    this.platforms.push(platform1);
-    this.platforms.push(platform2);
-    this.platforms.push(platform3);
+    this.platforms.push(platformFactory.createPlatform(150, 400));
+    this.platforms.push(platformFactory.createPlatform(300, 500));
+    this.platforms.push(platformFactory.createPlatform(500, 400));
   }
 
   update() {
