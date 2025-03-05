@@ -2,6 +2,7 @@ import { Application, Container } from "pixi.js";
 import { Hero } from "./entities/hero";
 import { PlatformFactory } from "./entities/platforms/platform-factory";
 import { KeyboardProcessor } from "./keyboard-processor";
+import { Platform } from "./entities/platforms/platform";
 
 class Game {
   private pixiApp;
@@ -57,20 +58,45 @@ class Game {
          огда герой возвращается по горизонтали, то есть его x откатывается до prevPoint.x, а значение y возвращается к currY. */
 
     for (let i = 0; i < this.platforms.length; i++) {
-      if (!this.isCheckAABB(this.hero, this.platforms[i])) {
-        continue;
-      }
-
-      const currY = this.hero.y;
-      this.hero.y = prevPoint.y;
-      if (!this.isCheckAABB(this.hero, this.platforms[i])) {
+      const collisionResult = this.getPlatformCollisionResult(
+        this.hero,
+        this.platforms[i],
+        prevPoint
+      );
+      if (collisionResult.vertical) {
         this.hero.stay();
-        continue;
       }
-
-      this.hero.y = currY;
-      this.hero.x = prevPoint.x;
     }
+  }
+
+  getPlatformCollisionResult(
+    character: Container,
+    platform: Platform,
+    prevPoint: {
+      y: number;
+      x: number;
+    }
+  ) {
+    const collisionResult = {
+      horizontal: false,
+      vertical: false,
+    };
+
+    if (!this.isCheckAABB(character, platform)) {
+      return collisionResult;
+    }
+
+    const currY = character.y;
+    character.y = prevPoint.y;
+    if (!this.isCheckAABB(character, platform)) {
+      collisionResult.vertical = true;
+      return collisionResult;
+    }
+
+    character.y = currY;
+    character.x = prevPoint.x;
+    collisionResult.horizontal = true;
+    return collisionResult;
   }
 
   // коллизия
