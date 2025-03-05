@@ -11,23 +11,19 @@ class Game {
     this.pixiApp = pixiApp;
 
     this.hero = new Hero();
-    this.hero.x = 200;
-    this.hero.y = 100;
+    this.hero.position.set(200, 100);
     this.pixiApp.stage.addChild(this.hero);
 
     const platform1 = new Platform();
-    platform1.x = 150;
-    platform1.y = 400;
+    platform1.position.set(150, 400);
     this.pixiApp.stage.addChild(platform1);
 
     const platform2 = new Platform();
-    platform2.x = 300;
-    platform2.y = 500;
+    platform2.position.set(300, 500);
     this.pixiApp.stage.addChild(platform2);
 
     const platform3 = new Platform();
-    platform3.x = 500;
-    platform3.y = 400;
+    platform3.position.set(500, 400);
     this.pixiApp.stage.addChild(platform3);
 
     this.platforms.push(platform1);
@@ -75,6 +71,27 @@ class Game {
       entity.y < area.y + area.height &&
       entity.y + entity.height > area.y
     );
+  }
+
+  onKeyDown(key: string) {
+    if (key === "a") {
+      this.hero.startLeftMove();
+    }
+    if (key === "d") {
+      this.hero.startRightMove();
+    }
+    if (key === " ") {
+      this.hero.jump();
+    }
+  }
+
+  onKeyUp(key: string) {
+    if (key === "a") {
+      this.hero.stopLeftMove();
+    }
+    if (key === "d") {
+      this.hero.stopRightMove();
+    }
   }
 }
 

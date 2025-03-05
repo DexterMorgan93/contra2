@@ -15,6 +15,13 @@ async function setup() {
 
   const game = new Game(app);
   app.ticker.add(game.update, game);
+
+  document.addEventListener("keydown", e => {
+    game.onKeyDown(e.key);
+  });
+  document.addEventListener("keyup", e => {
+    game.onKeyUp(e.key);
+  });
 })();
 
 initDevtools({
