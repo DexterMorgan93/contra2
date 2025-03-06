@@ -19,27 +19,21 @@ class Game {
 
     const platformFactory = new PlatformFactory(this.pixiApp);
 
-    this.platforms.push(platformFactory.createPlatform(150, 400));
-    this.platforms.push(platformFactory.createPlatform(300, 500));
-    this.platforms.push(platformFactory.createPlatform(500, 400));
+    this.platforms.push(platformFactory.createPlatform(100, 400));
+    this.platforms.push(platformFactory.createPlatform(290, 400));
+    this.platforms.push(platformFactory.createPlatform(480, 400));
+    this.platforms.push(platformFactory.createPlatform(670, 400));
+    this.platforms.push(platformFactory.createPlatform(860, 400));
+
+    this.platforms.push(platformFactory.createPlatform(290, 550));
+
+    this.platforms.push(platformFactory.createPlatform(0, 745));
+    this.platforms.push(platformFactory.createPlatform(190, 745));
+    this.platforms.push(platformFactory.createPlatform(380, 725));
 
     this.keyboardProcessor = new KeyboardProcessor(this);
 
-    this.keyboardProcessor.getButton(" ").executeDown = () => {
-      this.hero.jump();
-    };
-    this.keyboardProcessor.getButton("a").executeDown = () => {
-      this.hero.startLeftMove();
-    };
-    this.keyboardProcessor.getButton("a").executeUp = () => {
-      this.hero.stopLeftMove();
-    };
-    this.keyboardProcessor.getButton("d").executeDown = () => {
-      this.hero.startRightMove();
-    };
-    this.keyboardProcessor.getButton("d").executeUp = () => {
-      this.hero.stopRightMove();
-    };
+    this.setKeys();
   }
 
   update() {
@@ -51,6 +45,10 @@ class Game {
     this.hero.update();
 
     for (let i = 0; i < this.platforms.length; i++) {
+      if (this.hero.isJumpState()) {
+        continue;
+      }
+
       const collisionResult = this.getPlatformCollisionResult(
         this.hero,
         this.platforms[i],
@@ -70,9 +68,32 @@ class Game {
        огда герой возвращается по горизонтали, то есть его x откатывается до prevPoint.x, а значение y возвращается к currY. */
 
   getPlatformCollisionResult(
-    character: Container,
-    platform: Platform,
+    character: Hero,
+    platform: Container,
     prevPoint: {
+      y: number;
+      x: number;
+    }
+  ) {
+    const collisionResult = this.getOrientCollisionResult(
+      character.getRect(),
+      platform,
+      prevPoint
+    );
+
+    // делаем коллизии только по игреку, по горизонту не нужны
+    if (collisionResult.vertical) {
+      character.y = prevPoint.y;
+    }
+
+    return collisionResult;
+  }
+
+  // абстрактный метод, который просто возвращает результат коллизии
+  getOrientCollisionResult(
+    aaRect: { x: number; y: number; width: number; height: number },
+    bbRect: Container,
+    aaPrevPoint: {
       y: number;
       x: number;
     }
@@ -82,31 +103,54 @@ class Game {
       vertical: false,
     };
 
-    if (!this.isCheckAABB(character, platform)) {
+    if (!this.isCheckAABB(aaRect, bbRect)) {
       return collisionResult;
     }
 
-    const currY = character.y;
-    character.y = prevPoint.y;
-    if (!this.isCheckAABB(character, platform)) {
+    aaRect.y = aaPrevPoint.y;
+    if (!this.isCheckAABB(aaRect, bbRect)) {
       collisionResult.vertical = true;
       return collisionResult;
     }
 
-    character.y = currY;
-    character.x = prevPoint.x;
     collisionResult.horizontal = true;
     return collisionResult;
   }
 
   // коллизия
-  isCheckAABB(entity: Container, area: Container) {
+  isCheckAABB(
+    entity: { x: number; y: number; width: number; height: number },
+    area: Container
+  ) {
     return (
       entity.x < area.x + area.width &&
       entity.x + entity.width > area.x &&
       entity.y < area.y + area.height &&
       entity.y + entity.height > area.y
     );
+  }
+
+  setKeys() {
+    this.keyboardProcessor.getButton(" ").executeDown = () => {
+      if (this.keyboardProcessor.isButtonPressed("s")) {
+        this.hero.throwDown();
+      } else {
+        this.hero.jump();
+      }
+    };
+
+    this.keyboardProcessor.getButton("a").executeDown = () => {
+      this.hero.startLeftMove();
+    };
+    this.keyboardProcessor.getButton("a").executeUp = () => {
+      this.hero.stopLeftMove();
+    };
+    this.keyboardProcessor.getButton("d").executeDown = () => {
+      this.hero.startRightMove();
+    };
+    this.keyboardProcessor.getButton("d").executeUp = () => {
+      this.hero.stopRightMove();
+    };
   }
 }
 

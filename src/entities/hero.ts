@@ -3,6 +3,7 @@ import { Container, Graphics } from "pixi.js";
 const states = {
   stay: "stay",
   jump: "jump",
+  flyDown: "flyDown",
 };
 
 class Hero extends Container {
@@ -21,6 +22,12 @@ class Hero extends Container {
     right: 0,
   };
   private state = states.stay;
+  private rect = {
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  };
 
   constructor() {
     super();
@@ -39,6 +46,11 @@ class Hero extends Container {
     this.velocityX = this.speed * this.movement.x;
     this.x += this.velocityX;
 
+    // проверяем, находится ли герой в прыжке и в падении
+    if (this.velocityY > 0 && this.isJumpState()) {
+      this.state = states.flyDown;
+    }
+
     // движение вниз
     this.velocityY += this.gravityForce; // скорость становится больше
     this.y += this.velocityY;
@@ -50,11 +62,19 @@ class Hero extends Container {
   }
 
   jump() {
-    if (this.state === "jump") {
+    if (this.state === "jump" || this.state === states.flyDown) {
       return;
     }
     this.state = states.jump;
     this.velocityY -= this.jumpForce;
+  }
+  throwDown() {
+    // прыжок вниз
+    this.state = states.jump;
+  }
+
+  isJumpState() {
+    return this.state === states.jump;
   }
 
   startLeftMove() {
@@ -89,6 +109,15 @@ class Hero extends Container {
   stopLeftMove() {
     this.directionContext.left = 0;
     this.movement.x = this.directionContext.right;
+  }
+
+  getRect() {
+    this.rect.x = this.x;
+    this.rect.y = this.y;
+    this.rect.width = this.width;
+    this.rect.height = this.height;
+
+    return this.rect;
   }
 }
 
