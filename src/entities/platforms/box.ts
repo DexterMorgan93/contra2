@@ -2,6 +2,8 @@ import { Container, Graphics } from "pixi.js";
 
 class Box extends Container {
   public type = "box";
+  public isStep = false;
+
   constructor() {
     super();
     const view = new Graphics();

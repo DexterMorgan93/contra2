@@ -7,9 +7,9 @@ const states = {
 };
 
 class Hero extends Container {
-  private gravityForce = 0.1;
-  private jumpForce = 5;
-  private speed = 2;
+  private gravityForce = 0.2;
+  private jumpForce = 9;
+  private speed = 3;
   private velocityX = 0;
   private velocityY = 0;
   private movement = {
@@ -34,9 +34,9 @@ class Hero extends Container {
     const view = new Graphics();
     view.setStrokeStyle({
       width: 2,
-      color: 0x00ff00,
+      color: "yellow",
     });
-    view.rect(0, 0, 20, 60);
+    view.rect(0, 0, 20, 90);
     view.stroke();
     this.addChild(view);
   }

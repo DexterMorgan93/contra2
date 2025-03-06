@@ -2,6 +2,7 @@ import { Container, Graphics } from "pixi.js";
 
 class Platform extends Container {
   public type = "platform";
+  public isStep = false;
 
   constructor() {
     super();

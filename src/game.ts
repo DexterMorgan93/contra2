@@ -30,7 +30,10 @@ class Game {
 
     this.platforms.push(platformFactory.createBox(0, 745));
     this.platforms.push(platformFactory.createBox(190, 745));
-    this.platforms.push(platformFactory.createBox(380, 725));
+
+    const box = platformFactory.createBox(380, 725);
+    box.isStep = true;
+    this.platforms.push(box);
 
     this.keyboardProcessor = new KeyboardProcessor(this);
 
@@ -87,6 +90,11 @@ class Game {
       character.y = prevPoint.y;
     }
     if (collisionResult.horizontal && platform.type === "box") {
+      if (platform.isStep) {
+        // если персонаж сразу залазит на платформу, как ступенька
+        character.stay(platform.y);
+      }
+
       character.x = prevPoint.x;
     }
 
