@@ -56,9 +56,11 @@ class Hero extends Container {
     this.y += this.velocityY;
   }
 
-  stay() {
+  stay(platformY: number) {
     this.state = states.stay;
     this.velocityY = 0;
+
+    this.y = platformY - this.height;
   }
 
   jump() {

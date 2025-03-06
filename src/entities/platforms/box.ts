@@ -1,14 +1,13 @@
 import { Container, Graphics } from "pixi.js";
 
-class Platform extends Container {
-  public type = "platform";
-
+class Box extends Container {
+  public type = "box";
   constructor() {
     super();
     const view = new Graphics();
     view.setStrokeStyle({
       width: 2,
-      color: 0x00ff00,
+      color: 0x00ff,
     });
     view.rect(0, 0, 190, 20);
     view.stroke();
@@ -16,4 +15,4 @@ class Platform extends Container {
   }
 }
 
-export { Platform };
+export { Box };

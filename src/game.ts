@@ -3,11 +3,12 @@ import { Hero } from "./entities/hero";
 import { PlatformFactory } from "./entities/platforms/platform-factory";
 import { KeyboardProcessor } from "./keyboard-processor";
 import { Platform } from "./entities/platforms/platform";
+import { Box } from "./entities/platforms/box";
 
 class Game {
   private pixiApp;
   private hero;
-  private platforms: Container[] = [];
+  private platforms: (Platform | Box)[] = [];
   public keyboardProcessor: KeyboardProcessor;
 
   constructor(pixiApp: Application) {
@@ -27,9 +28,9 @@ class Game {
 
     this.platforms.push(platformFactory.createPlatform(290, 550));
 
-    this.platforms.push(platformFactory.createPlatform(0, 745));
-    this.platforms.push(platformFactory.createPlatform(190, 745));
-    this.platforms.push(platformFactory.createPlatform(380, 725));
+    this.platforms.push(platformFactory.createBox(0, 745));
+    this.platforms.push(platformFactory.createBox(190, 745));
+    this.platforms.push(platformFactory.createBox(380, 725));
 
     this.keyboardProcessor = new KeyboardProcessor(this);
 
@@ -45,7 +46,7 @@ class Game {
     this.hero.update();
 
     for (let i = 0; i < this.platforms.length; i++) {
-      if (this.hero.isJumpState()) {
+      if (this.hero.isJumpState() && this.platforms[i].type !== "box") {
         continue;
       }
 
@@ -55,7 +56,7 @@ class Game {
         prevPoint
       );
       if (collisionResult.vertical) {
-        this.hero.stay();
+        this.hero.stay(this.platforms[i].y);
       }
     }
   }
@@ -69,7 +70,7 @@ class Game {
 
   getPlatformCollisionResult(
     character: Hero,
-    platform: Container,
+    platform: Platform,
     prevPoint: {
       y: number;
       x: number;
@@ -84,6 +85,9 @@ class Game {
     // делаем коллизии только по игреку, по горизонту не нужны
     if (collisionResult.vertical) {
       character.y = prevPoint.y;
+    }
+    if (collisionResult.horizontal && platform.type === "box") {
+      character.x = prevPoint.x;
     }
 
     return collisionResult;

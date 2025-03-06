@@ -1,5 +1,6 @@
 import { Application } from "pixi.js";
 import { Platform } from "./platform";
+import { Box } from "./box";
 
 export class PlatformFactory {
   private pixiApp;
@@ -13,5 +14,12 @@ export class PlatformFactory {
     platform.position.set(x, y);
     this.pixiApp.stage.addChild(platform);
     return platform;
+  }
+
+  createBox(x: number, y: number): Box {
+    const box = new Box();
+    box.position.set(x, y);
+    this.pixiApp.stage.addChild(box);
+    return box;
   }
 }
