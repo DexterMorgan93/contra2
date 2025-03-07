@@ -178,8 +178,8 @@ class Game {
   }
 
   setKeys() {
-    this.keyboardProcessor.getButton("Control").executeDown = () => {
-      const bullet = this.bulletfactory.createBullet(this.hero.x, this.hero.y);
+    this.keyboardProcessor.getButton("Enter").executeDown = () => {
+      const bullet = this.bulletfactory.createBullet(this.hero.bulletContext);
       this.bullets.push(bullet);
       this.worldContainer.addChild(bullet);
     };

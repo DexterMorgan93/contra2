@@ -1,12 +1,18 @@
 import { Bullet } from "./bullet";
 
+export interface BulletContext {
+  x: number;
+  y: number;
+  angle: number;
+}
+
 export class BulletFactory {
   constructor() {}
 
-  createBullet(x: number, y: number) {
-    const bullet = new Bullet();
-    bullet.x = x;
-    bullet.y = y;
+  createBullet(bulletContext: BulletContext) {
+    const bullet = new Bullet((bulletContext.angle * Math.PI) / 180);
+    bullet.x = bulletContext.x;
+    bullet.y = bulletContext.y;
     return bullet;
   }
 }

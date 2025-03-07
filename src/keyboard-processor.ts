@@ -14,7 +14,7 @@ export class KeyboardProcessor {
     s: { isDown: false, executeDown: () => {}, executeUp: () => {} },
     a: { isDown: false, executeDown: () => {}, executeUp: () => {} },
     d: { isDown: false, executeDown: () => {}, executeUp: () => {} },
-    Control: { isDown: false, executeDown: () => {}, executeUp: () => {} },
+    Enter: { isDown: false, executeDown: () => {}, executeUp: () => {} },
     " ": { isDown: false, executeDown: () => {}, executeUp: () => {} },
   };
 
