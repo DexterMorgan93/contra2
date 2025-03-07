@@ -26,9 +26,16 @@ class Hero {
 
   private view: HeroView;
 
+  private isLay = false;
+  private isStayUp = false;
+
   constructor(appStage: Container) {
     this.view = new HeroView();
+    this.view.showStay();
     appStage.addChild(this.view);
+
+    this.state = states.jump;
+    this.view.showJump();
   }
 
   getCollisionBox() {
@@ -54,7 +61,10 @@ class Hero {
     this.x += this.velocityX;
 
     // проверяем, находится ли герой в прыжке и в падении
-    if (this.velocityY > 0 && this.isJumpState()) {
+    if (this.velocityY > 0) {
+      if (!(this.state === states.jump || this.state === states.flyDown)) {
+        this.view.showFall();
+      }
       this.state = states.flyDown;
     }
 
@@ -64,6 +74,21 @@ class Hero {
   }
 
   stay(platformY: number) {
+    if (this.state === "jump" || this.state === states.flyDown) {
+      const fakeButtonContext = {
+        leftMove: false,
+        rightMove: false,
+        arrowUp: false,
+        arrowDown: false,
+      };
+      fakeButtonContext.leftMove = this.movement.x === -1;
+      fakeButtonContext.rightMove = this.movement.x === 1;
+      fakeButtonContext.arrowUp = this.isLay;
+      fakeButtonContext.arrowDown = this.isStayUp;
+      this.state = states.stay;
+      this.setView(fakeButtonContext);
+    }
+
     this.state = states.stay;
     this.velocityY = 0;
 
@@ -76,10 +101,12 @@ class Hero {
     }
     this.state = states.jump;
     this.velocityY -= this.jumpForce;
+    this.view.showJump();
   }
   throwDown() {
     // прыжок вниз
     this.state = states.jump;
+    this.view.showFall();
   }
 
   isJumpState() {
@@ -118,6 +145,40 @@ class Hero {
   stopLeftMove() {
     this.directionContext.left = 0;
     this.movement.x = this.directionContext.right;
+  }
+
+  setView(buttonContext: {
+    leftMove: boolean;
+    rightMove: boolean;
+    arrowUp: boolean;
+    arrowDown: boolean;
+  }) {
+    this.view.flip(this.movement.x);
+    this.isLay = buttonContext.arrowDown;
+    this.isStayUp = buttonContext.arrowUp;
+
+    if (this.state === states.jump || this.state === states.flyDown) {
+      return;
+    }
+
+    if (buttonContext.leftMove || buttonContext.rightMove) {
+      if (buttonContext.arrowUp) {
+        this.view.showRunUp();
+      } else if (buttonContext.arrowDown) {
+        this.view.showRunDown();
+      } else {
+        this.view.showRun();
+      }
+    } else {
+      if (buttonContext.arrowUp) {
+        console.log(buttonContext);
+        this.view.showStayUp();
+      } else if (buttonContext.arrowDown) {
+        this.view.showLay();
+      } else {
+        this.view.showStay();
+      }
+    }
   }
 }
 

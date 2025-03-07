@@ -15,7 +15,7 @@ class Game {
     this.pixiApp = pixiApp;
 
     this.hero = new Hero(this.pixiApp.stage);
-    this.hero.x = 200;
+    this.hero.x = 100;
     this.hero.y = 100;
 
     const platformFactory = new PlatformFactory(this.pixiApp);
@@ -144,25 +144,69 @@ class Game {
 
   setKeys() {
     this.keyboardProcessor.getButton(" ").executeDown = () => {
-      if (this.keyboardProcessor.isButtonPressed("s")) {
+      if (
+        this.keyboardProcessor.isButtonPressed("s") &&
+        !(
+          this.keyboardProcessor.isButtonPressed("a") ||
+          this.keyboardProcessor.isButtonPressed("d")
+        )
+      ) {
         this.hero.throwDown();
       } else {
         this.hero.jump();
       }
     };
 
-    this.keyboardProcessor.getButton("a").executeDown = () => {
+    const leftMove = this.keyboardProcessor.getButton("a");
+    leftMove.executeDown = () => {
       this.hero.startLeftMove();
+      this.hero.setView(this.getMoveButtonContext());
     };
-    this.keyboardProcessor.getButton("a").executeUp = () => {
+    leftMove.executeUp = () => {
       this.hero.stopLeftMove();
+      this.hero.setView(this.getMoveButtonContext());
     };
-    this.keyboardProcessor.getButton("d").executeDown = () => {
+
+    const rightMove = this.keyboardProcessor.getButton("d");
+    rightMove.executeDown = () => {
       this.hero.startRightMove();
+      this.hero.setView(this.getMoveButtonContext());
     };
-    this.keyboardProcessor.getButton("d").executeUp = () => {
+    rightMove.executeUp = () => {
       this.hero.stopRightMove();
+      this.hero.setView(this.getMoveButtonContext());
     };
+
+    const arrowUp = this.keyboardProcessor.getButton("w");
+    arrowUp.executeDown = () => {
+      this.hero.setView(this.getMoveButtonContext());
+    };
+    arrowUp.executeUp = () => {
+      this.hero.setView(this.getMoveButtonContext());
+    };
+
+    const arrowDown = this.keyboardProcessor.getButton("s");
+    arrowDown.executeDown = () => {
+      this.hero.setView(this.getMoveButtonContext());
+    };
+    arrowDown.executeUp = () => {
+      this.hero.setView(this.getMoveButtonContext());
+    };
+  }
+
+  getMoveButtonContext() {
+    const buttonContext = {
+      leftMove: false,
+      rightMove: false,
+      arrowUp: false,
+      arrowDown: false,
+    };
+    buttonContext.leftMove = this.keyboardProcessor.isButtonPressed("a");
+    buttonContext.rightMove = this.keyboardProcessor.isButtonPressed("d");
+    buttonContext.arrowUp = this.keyboardProcessor.isButtonPressed("w");
+    buttonContext.arrowDown = this.keyboardProcessor.isButtonPressed("s");
+
+    return buttonContext;
   }
 }
 

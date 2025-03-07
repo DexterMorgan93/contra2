@@ -76,6 +76,10 @@ export class HeroView extends Container {
     if (this.stateMachine.currentstate === key) {
       return;
     }
+    Object.values(this.stateMachine.states).forEach((state) => {
+      state.visible = false;
+    });
+
     this.stateMachine.states[key].visible = true;
     this.stateMachine.currentstate = key;
   }

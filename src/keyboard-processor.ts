@@ -28,16 +28,16 @@ export class KeyboardProcessor {
   onKeyDown(key: string): void {
     const button = this.keyMap[key];
     if (button !== undefined) {
-      button.executeDown.call(this.gameContext);
       button.isDown = true;
+      button.executeDown.call(this.gameContext);
     }
   }
 
   onKeyUp(key: string): void {
     const button = this.keyMap[key];
     if (button !== undefined) {
-      button.executeUp.call(this.gameContext);
       button.isDown = false;
+      button.executeUp.call(this.gameContext);
     }
   }
 
