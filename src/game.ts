@@ -1,30 +1,43 @@
-import { Application, Container } from "pixi.js";
+import { Application, Container, ContainerChild, Rectangle } from "pixi.js";
 import { Hero } from "./entities/hero/hero";
 import { PlatformFactory } from "./entities/platforms/platform-factory";
 import { KeyboardProcessor } from "./keyboard-processor";
 import { Platform } from "./entities/platforms/platform";
 import { Box } from "./entities/platforms/box";
+import { Camera } from "./camera";
+
+export interface CameraSettings {
+  target: Hero;
+  world: Container<ContainerChild>;
+  screenSize: Rectangle;
+  maxWorldWidth: number;
+  isBackScrollX: boolean;
+}
 
 class Game {
   private pixiApp;
   private hero;
   private platforms: (Platform | Box)[] = [];
+  private camera: Camera;
   public keyboardProcessor: KeyboardProcessor;
 
   constructor(pixiApp: Application) {
     this.pixiApp = pixiApp;
 
-    this.hero = new Hero(this.pixiApp.stage);
+    const worldContainer = new Container();
+    this.pixiApp.stage.addChild(worldContainer);
+
+    this.hero = new Hero(worldContainer);
     this.hero.x = 100;
     this.hero.y = 100;
 
-    const platformFactory = new PlatformFactory(this.pixiApp);
+    const platformFactory = new PlatformFactory(worldContainer);
 
     this.platforms.push(platformFactory.createPlatform(100, 400));
     this.platforms.push(platformFactory.createPlatform(290, 400));
     this.platforms.push(platformFactory.createPlatform(480, 400));
     this.platforms.push(platformFactory.createPlatform(670, 400));
-    this.platforms.push(platformFactory.createPlatform(860, 400));
+    this.platforms.push(platformFactory.createPlatform(1060, 400));
 
     this.platforms.push(platformFactory.createPlatform(290, 550));
 
@@ -36,8 +49,17 @@ class Game {
     this.platforms.push(box);
 
     this.keyboardProcessor = new KeyboardProcessor(this);
-
     this.setKeys();
+
+    const cameraSettings: CameraSettings = {
+      target: this.hero,
+      world: worldContainer,
+      screenSize: this.pixiApp.screen,
+      maxWorldWidth: worldContainer.width,
+      isBackScrollX: false,
+    };
+
+    this.camera = new Camera(cameraSettings);
   }
 
   update() {
@@ -62,6 +84,8 @@ class Game {
         this.hero.stay(this.platforms[i].y);
       }
     }
+
+    this.camera.update();
   }
 
   /* пробегаемся по всем платформам и останавливаем персонажа при коллизии
