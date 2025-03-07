@@ -5,6 +5,8 @@ import { KeyboardProcessor } from "./keyboard-processor";
 import { Platform } from "./entities/platforms/platform";
 import { Box } from "./entities/platforms/box";
 import { Camera } from "./camera";
+import { BulletFactory } from "./entities/bullets/bullet-factory";
+import { Bullet } from "./entities/bullets/bullet";
 
 export interface CameraSettings {
   target: Hero;
@@ -19,19 +21,22 @@ class Game {
   private hero;
   private platforms: (Platform | Box)[] = [];
   private camera: Camera;
+  private worldContainer: Container;
+  private bulletfactory: BulletFactory;
+  private bullets: Bullet[] = [];
   public keyboardProcessor: KeyboardProcessor;
 
   constructor(pixiApp: Application) {
     this.pixiApp = pixiApp;
 
-    const worldContainer = new Container();
-    this.pixiApp.stage.addChild(worldContainer);
+    this.worldContainer = new Container();
+    this.pixiApp.stage.addChild(this.worldContainer);
 
-    this.hero = new Hero(worldContainer);
+    this.hero = new Hero(this.worldContainer);
     this.hero.x = 100;
     this.hero.y = 100;
 
-    const platformFactory = new PlatformFactory(worldContainer);
+    const platformFactory = new PlatformFactory(this.worldContainer);
 
     this.platforms.push(platformFactory.createPlatform(100, 400));
     this.platforms.push(platformFactory.createPlatform(290, 400));
@@ -53,13 +58,15 @@ class Game {
 
     const cameraSettings: CameraSettings = {
       target: this.hero,
-      world: worldContainer,
+      world: this.worldContainer,
       screenSize: this.pixiApp.screen,
-      maxWorldWidth: worldContainer.width,
+      maxWorldWidth: this.worldContainer.width,
       isBackScrollX: false,
     };
 
     this.camera = new Camera(cameraSettings);
+
+    this.bulletfactory = new BulletFactory();
   }
 
   update() {
@@ -86,6 +93,10 @@ class Game {
     }
 
     this.camera.update();
+
+    for (let i = 0; i < this.bullets.length; i++) {
+      this.bullets[i].update();
+    }
   }
 
   /* пробегаемся по всем платформам и останавливаем персонажа при коллизии
@@ -167,6 +178,12 @@ class Game {
   }
 
   setKeys() {
+    this.keyboardProcessor.getButton("Control").executeDown = () => {
+      const bullet = this.bulletfactory.createBullet(this.hero.x, this.hero.y);
+      this.bullets.push(bullet);
+      this.worldContainer.addChild(bullet);
+    };
+
     this.keyboardProcessor.getButton(" ").executeDown = () => {
       if (
         this.keyboardProcessor.isButtonPressed("s") &&
