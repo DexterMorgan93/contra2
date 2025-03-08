@@ -6,7 +6,7 @@ export class Bullet extends Container {
 
   constructor(angleBullet: number) {
     super();
-    this.angleBullet = angleBullet;
+    this.angleBullet = (angleBullet * Math.PI) / 180;
     const view = new Graphics();
     view.setStrokeStyle({
       width: 2,
