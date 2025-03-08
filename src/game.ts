@@ -7,6 +7,8 @@ import { Box } from "./entities/platforms/box";
 import { Camera } from "./camera";
 import { BulletFactory } from "./entities/bullets/bullet-factory";
 import { Bullet } from "./entities/bullets/bullet";
+import { Runner } from "./entities/enemies/runner/runner";
+import { RunnerFactory } from "./entities/enemies/runner/runner-factory";
 
 export interface CameraSettings {
   target: Hero;
@@ -24,6 +26,8 @@ class Game {
   private worldContainer: Container;
   private bulletfactory: BulletFactory;
   private bullets: Bullet[] = [];
+  private runnerFctory: RunnerFactory;
+  private enemies: Runner[] = [];
   public keyboardProcessor: KeyboardProcessor;
 
   constructor(pixiApp: Application) {
@@ -39,7 +43,7 @@ class Game {
     const platformFactory = new PlatformFactory(this.worldContainer);
 
     this.platforms.push(platformFactory.createPlatform(100, 400));
-    this.platforms.push(platformFactory.createPlatform(290, 400));
+    // this.platforms.push(platformFactory.createPlatform(290, 400));
     this.platforms.push(platformFactory.createPlatform(480, 400));
     this.platforms.push(platformFactory.createPlatform(670, 400));
     this.platforms.push(platformFactory.createPlatform(1060, 400));
@@ -48,6 +52,8 @@ class Game {
 
     this.platforms.push(platformFactory.createBox(0, 745));
     this.platforms.push(platformFactory.createBox(190, 745));
+    this.platforms.push(platformFactory.createBox(590, 745));
+    this.platforms.push(platformFactory.createBox(990, 745));
 
     const box = platformFactory.createBox(380, 725);
     box.isStep = true;
@@ -67,17 +73,30 @@ class Game {
     this.camera = new Camera(cameraSettings);
 
     this.bulletfactory = new BulletFactory();
+
+    this.runnerFctory = new RunnerFactory(this.worldContainer);
+    this.enemies.push(this.runnerFctory.create(800, 100));
   }
 
   update() {
     this.hero.update();
 
+    for (let enemy of this.enemies) {
+      enemy.update();
+    }
+
     for (let platform of this.platforms) {
       if (this.hero.isJumpState() && platform.type !== "box") {
         continue;
       }
-
       this.checkPlatformCollision(this.hero, platform);
+
+      for (let enemy of this.enemies) {
+        if (enemy.isJumpState() && platform.type !== "box") {
+          continue;
+        }
+        this.checkPlatformCollision(enemy, platform);
+      }
     }
 
     this.camera.update();
@@ -107,7 +126,7 @@ class Game {
        Это указывает на то, что именно горизонтальное движение привело к столкновению.
        огда герой возвращается по горизонтали, то есть его x откатывается до prevPoint.x, а значение y возвращается к currY. */
 
-  checkPlatformCollision(character: Hero, platform: Platform) {
+  checkPlatformCollision(character: Hero | Runner, platform: Platform) {
     const prevPoint = character.getPrevpont;
     const collisionResult = this.getOrientCollisionResult(
       character.getCollisionBox(),
@@ -118,7 +137,7 @@ class Game {
     // делаем коллизии только по игреку, по горизонту не нужны
     if (collisionResult.vertical) {
       character.y = prevPoint.y;
-      this.hero.stay(platform.y);
+      character.stay(platform.y);
     }
     if (collisionResult.horizontal && platform.type === "box") {
       if (platform.isStep) {

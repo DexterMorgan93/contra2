@@ -28,12 +28,15 @@ export class Runner {
 
   private view: RunnerView;
 
-  constructor(appStage: Container) {
+  constructor(worldContainer: Container) {
     this.view = new RunnerView();
-    appStage.addChild(this.view);
+
+    worldContainer.addChild(this.view);
 
     this.state = states.jump;
     this.view.showJump();
+
+    this.movement.x = -1;
   }
 
   private prevPoint = {
@@ -73,9 +76,13 @@ export class Runner {
     // проверяем, находится ли герой в прыжке и в падении
     if (this.velocityY > 0) {
       if (!(this.state === states.jump || this.state === states.flyDown)) {
-        this.view.showFall();
+        if (Math.random() > 0.4) {
+          this.jump();
+        } else {
+          this.view.showFall();
+        }
       }
-      this.state = states.flyDown;
+      if (this.velocityY > 0) this.state = states.flyDown;
     }
 
     // движение вниз
