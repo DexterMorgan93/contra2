@@ -96,6 +96,19 @@ class Game {
 
     for (let i = 0; i < this.bullets.length; i++) {
       this.bullets[i].update();
+      this.checkbullet(this.bullets[i], i);
+    }
+  }
+
+  private checkbullet(bullet: Bullet, index: number) {
+    if (
+      bullet.x > this.pixiApp.screen.width - this.worldContainer.x ||
+      bullet.x < 0 ||
+      bullet.y > this.pixiApp.screen.height - this.worldContainer.y ||
+      bullet.y < 0
+    ) {
+      bullet.removeFromParent();
+      this.bullets.splice(index, 1);
     }
   }
 
