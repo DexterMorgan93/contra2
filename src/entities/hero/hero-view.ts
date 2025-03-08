@@ -32,14 +32,19 @@ export class HeroView extends Container {
 
   stateMachine: StateMachine;
 
+  private bulletPointShift = {
+    x: 0,
+    y: 0,
+  };
+
   constructor() {
     super();
     this.createNodeStructure();
-
-    this.rootNode.pivot.x = this.bounds.width / 2;
-    this.rootNode.x = this.bounds.width / 2;
     this.bounds.width = 20;
     this.bounds.height = 90;
+    this.rootNode.pivot.x = 10;
+    this.rootNode.x = 10;
+
     this.collisionBox.width = this.bounds.width;
     this.collisionBox.height = this.bounds.height;
 
@@ -90,29 +95,46 @@ export class HeroView extends Container {
     return this.collisionBox;
   }
 
+  get getBulletPointShift() {
+    return this.bulletPointShift;
+  }
+
+  get isFlpped() {
+    return this.rootNode.scale.x === -1;
+  }
+
   showStay() {
     this.toState("stay");
+
+    this.setBulletPointShift(65, 30);
   }
   showStayUp() {
     this.toState("stayUp");
+    this.setBulletPointShift(-2, -40);
   }
   showRun() {
     this.toState("run");
+    this.setBulletPointShift(65, 30);
   }
   showRunUp() {
     this.toState("runUp");
+    this.setBulletPointShift(40, -20);
   }
   showRunDown() {
     this.toState("runDown");
+    this.setBulletPointShift(20, 55);
   }
   showLay() {
     this.toState("lay");
+    this.setBulletPointShift(65, 70);
   }
   showJump() {
     this.toState("jump");
+    this.setBulletPointShift(-2, 40);
   }
   showFall() {
     this.toState("fall");
+    this.setBulletPointShift(65, 30);
   }
   flip(direction: number) {
     switch (direction) {
@@ -120,6 +142,13 @@ export class HeroView extends Container {
       case -1:
         this.rootNode.scale.x = direction;
     }
+  }
+
+  setBulletPointShift(x: number, y: number) {
+    this.bulletPointShift.x =
+      (x + this.rootNode.pivot.x * this.rootNode.scale.x) *
+      this.rootNode.scale.x;
+    this.bulletPointShift.y = y;
   }
 
   private getStayImage() {

@@ -54,9 +54,11 @@ class Hero {
   }
 
   get bulletContext() {
-    this.bulletContextP.x = this.x;
-    this.bulletContextP.y = this.y;
-    this.bulletContextP.angle = this.bulletAngle;
+    this.bulletContextP.x = this.x + this.view.getBulletPointShift.x;
+    this.bulletContextP.y = this.y + +this.view.getBulletPointShift.y;
+    this.bulletContextP.angle = this.view.isFlpped
+      ? this.bulletAngle * -1 + 180
+      : this.bulletAngle;
     return this.bulletContextP;
   }
 
