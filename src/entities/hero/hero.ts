@@ -62,6 +62,11 @@ class Hero {
     return this.bulletContextP;
   }
 
+  private prevPoint = {
+    y: 0,
+    x: 0,
+  }; // храним предыдущее знаение героя
+
   getCollisionBox() {
     return this.view.collisionbox;
   }
@@ -79,7 +84,14 @@ class Hero {
     this.view.y = value;
   }
 
+  get getPrevpont() {
+    return this.prevPoint;
+  }
+
   update() {
+    this.prevPoint.x = this.x; // храним предыдущее знаение героя
+    this.prevPoint.y = this.y; // храним предыдущее знаение героя
+
     // движение по горизонтали
     this.velocityX = this.speed * this.movement.x;
     this.x += this.velocityX;

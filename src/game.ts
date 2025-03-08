@@ -70,26 +70,14 @@ class Game {
   }
 
   update() {
-    const prevPoint = {
-      y: this.hero.y,
-      x: this.hero.x,
-    }; // храним предыдущее знаение героя
-
     this.hero.update();
 
-    for (let i = 0; i < this.platforms.length; i++) {
-      if (this.hero.isJumpState() && this.platforms[i].type !== "box") {
+    for (let platform of this.platforms) {
+      if (this.hero.isJumpState() && platform.type !== "box") {
         continue;
       }
 
-      const collisionResult = this.getPlatformCollisionResult(
-        this.hero,
-        this.platforms[i],
-        prevPoint
-      );
-      if (collisionResult.vertical) {
-        this.hero.stay(this.platforms[i].y);
-      }
+      this.checkPlatformCollision(this.hero, platform);
     }
 
     this.camera.update();
@@ -119,14 +107,8 @@ class Game {
        Это указывает на то, что именно горизонтальное движение привело к столкновению.
        огда герой возвращается по горизонтали, то есть его x откатывается до prevPoint.x, а значение y возвращается к currY. */
 
-  getPlatformCollisionResult(
-    character: Hero,
-    platform: Platform,
-    prevPoint: {
-      y: number;
-      x: number;
-    }
-  ) {
+  checkPlatformCollision(character: Hero, platform: Platform) {
+    const prevPoint = character.getPrevpont;
     const collisionResult = this.getOrientCollisionResult(
       character.getCollisionBox(),
       platform,
@@ -136,17 +118,16 @@ class Game {
     // делаем коллизии только по игреку, по горизонту не нужны
     if (collisionResult.vertical) {
       character.y = prevPoint.y;
+      this.hero.stay(platform.y);
     }
     if (collisionResult.horizontal && platform.type === "box") {
       if (platform.isStep) {
         // если персонаж сразу залазит на платформу, как ступенька
         character.stay(platform.y);
+      } else {
+        character.x = prevPoint.x;
       }
-
-      character.x = prevPoint.x;
     }
-
-    return collisionResult;
   }
 
   // абстрактный метод, который просто возвращает результат коллизии
