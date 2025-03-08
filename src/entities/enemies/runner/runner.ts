@@ -135,4 +135,8 @@ export class Runner {
       this.view.showRun();
     }
   }
+
+  removeFromParent() {
+    this.view.removeFromParent();
+  }
 }

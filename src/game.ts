@@ -76,13 +76,26 @@ class Game {
 
     this.runnerFctory = new RunnerFactory(this.worldContainer);
     this.enemies.push(this.runnerFctory.create(800, 100));
+    this.enemies.push(this.runnerFctory.create(1000, 100));
   }
 
   update() {
     this.hero.update();
 
-    for (let enemy of this.enemies) {
-      enemy.update();
+    for (let i = 0; i < this.enemies.length; i++) {
+      this.enemies[i].update();
+
+      let isDead = false;
+
+      for (let bullet of this.bullets) {
+        if (this.isCheckAABB(bullet, this.enemies[i].getCollisionBox())) {
+          isDead = true;
+          bullet.isDead = true;
+          break;
+        }
+      }
+
+      this.checkEnemy(this.enemies[i], i, isDead);
     }
 
     for (let platform of this.platforms) {
@@ -109,6 +122,7 @@ class Game {
 
   private checkbullet(bullet: Bullet, index: number) {
     if (
+      bullet.isDead ||
       bullet.x > this.pixiApp.screen.width - this.worldContainer.x ||
       bullet.x < 0 ||
       bullet.y > this.pixiApp.screen.height - this.worldContainer.y ||
@@ -116,6 +130,19 @@ class Game {
     ) {
       bullet.removeFromParent();
       this.bullets.splice(index, 1);
+    }
+  }
+
+  private checkEnemy(enemy: Runner, index: number, isDead: boolean) {
+    if (
+      isDead ||
+      enemy.x > this.pixiApp.screen.width - this.worldContainer.x ||
+      enemy.x < 0 ||
+      enemy.y > this.pixiApp.screen.height - this.worldContainer.y ||
+      enemy.y < 0
+    ) {
+      enemy.removeFromParent();
+      this.enemies.splice(index, 1);
     }
   }
 
@@ -180,7 +207,7 @@ class Game {
   // коллизия
   isCheckAABB(
     entity: { x: number; y: number; width: number; height: number },
-    area: Container
+    area: { x: number; y: number; width: number; height: number }
   ) {
     return (
       entity.x < area.x + area.width &&

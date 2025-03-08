@@ -3,6 +3,7 @@ import { Container, Graphics } from "pixi.js";
 export class Bullet extends Container {
   private speed = 10;
   private angleBullet: number;
+  isDead = false;
 
   constructor(angleBullet: number) {
     super();
