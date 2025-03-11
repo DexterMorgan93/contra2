@@ -4,6 +4,7 @@ import { BulletView } from "./bullet-view";
 export class Bullet extends Entity<BulletView> {
   private speed = 10;
   private angleBullet: number;
+  public type = "";
 
   constructor(view: BulletView, angleBullet: number) {
     super(view);

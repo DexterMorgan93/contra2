@@ -26,10 +26,10 @@ class Game {
   private camera: Camera;
   private worldContainer: Container;
   private bulletfactory: BulletFactory;
-  private bullets: Bullet[] = [];
   private runnerFctory: RunnerFactory;
-  private enemies: Runner[] = [];
   public keyboardProcessor: KeyboardProcessor;
+
+  private entities: (Hero | Runner | Bullet)[] = [];
 
   constructor(pixiApp: Application) {
     this.pixiApp = pixiApp;
@@ -39,6 +39,8 @@ class Game {
 
     const herofactory = new HeroFactory(this.worldContainer);
     this.hero = herofactory.create(100, 100);
+
+    this.entities.push(this.hero);
 
     const platformFactory = new PlatformFactory(this.worldContainer);
 
@@ -75,76 +77,73 @@ class Game {
     this.bulletfactory = new BulletFactory(this.worldContainer);
 
     this.runnerFctory = new RunnerFactory(this.worldContainer);
-    this.enemies.push(this.runnerFctory.create(800, 100));
-    this.enemies.push(this.runnerFctory.create(1000, 100));
+    this.entities.push(this.runnerFctory.create(800, 100));
+    this.entities.push(this.runnerFctory.create(1000, 100));
   }
 
   update() {
-    this.hero.update();
+    for (let i = 0; i < this.entities.length; i++) {
+      const entity = this.entities[i];
+      entity.update();
 
-    for (let i = 0; i < this.enemies.length; i++) {
-      this.enemies[i].update();
-
-      let isDead = false;
-
-      for (let bullet of this.bullets) {
-        if (
-          this.isCheckAABB(bullet.collisionBox, this.enemies[i].collisionBox)
-        ) {
-          isDead = true;
-          bullet.isDead = true;
-          break;
-        }
+      if (entity.type === "hero" || entity.type === "characterEnemy") {
+        this.checkDamage(entity);
+        this.checkPlatforms(entity);
       }
 
-      this.checkEnemy(this.enemies[i], i, isDead);
-    }
-
-    for (let platform of this.platforms) {
-      if (this.hero.isJumpState() && platform.type !== "box") {
-        continue;
-      }
-      this.checkPlatformCollision(this.hero, platform);
-
-      for (let enemy of this.enemies) {
-        if (enemy.isJumpState() && platform.type !== "box") {
-          continue;
-        }
-        this.checkPlatformCollision(enemy, platform);
-      }
+      this.checkEntityStatus(entity, i);
     }
 
     this.camera.update();
+  }
 
-    for (let i = 0; i < this.bullets.length; i++) {
-      this.bullets[i].update();
-      this.checkbullet(this.bullets[i], i);
+  private checkDamage(entity: Hero | Runner | Bullet) {
+    const damagers = this.entities.filter(
+      (damager) =>
+        (entity.type === "characterEnemy" && damager.type === "heroBullet") ||
+        (entity.type === "hero" &&
+          (damager.type === "enemyBullet" || damager.type === "characterEnemy"))
+    );
+
+    for (const damager of damagers) {
+      if (this.isCheckAABB(damager.collisionBox, entity.collisionBox)) {
+        entity.dead();
+        if (damager.type !== "characterEnemy") {
+          damager.dead();
+        }
+        break;
+      }
     }
   }
 
-  private checkbullet(bullet: Bullet, index: number) {
-    if (
-      bullet.isDead ||
-      bullet.x > this.pixiApp.screen.width - this.worldContainer.x ||
-      bullet.x < 0 ||
-      bullet.y > this.pixiApp.screen.height - this.worldContainer.y ||
-      bullet.y < 0
-    ) {
-      bullet.removeFromStage();
-      this.bullets.splice(index, 1);
+  private checkEntityStatus(entity: Hero | Runner | Bullet, i: number) {
+    if (entity.isDead || this.isScreenOut(entity)) {
+      entity.removeFromStage();
+      this.entities.splice(i, 1);
     }
   }
 
-  private checkEnemy(enemy: Runner, index: number, isDead: boolean) {
-    if (
-      isDead ||
-      enemy.x > this.pixiApp.screen.width - this.worldContainer.x ||
-      enemy.x < 0 ||
-      enemy.y > this.pixiApp.screen.height - this.worldContainer.y ||
-      enemy.y < 0
-    ) {
-      enemy.removeFromParent();
-      this.enemies.splice(index, 1);
+  private isScreenOut(entity: Hero | Runner | Bullet) {
+    return (
+      entity.x > this.pixiApp.screen.width - this.worldContainer.x ||
+      entity.x < -this.worldContainer.x ||
+      entity.y > this.pixiApp.screen.height ||
+      entity.y < 0
+    );
+  }
+
+  private checkPlatforms(character: Hero | Runner | Bullet) {
+    if (character.isDead) {
+      return;
+    }
+
+    for (let platform of this.platforms) {
+      if (character instanceof Hero || character instanceof Runner) {
+        if (character.isJumpState() && platform.type !== "box") {
+          continue;
+        }
+        this.checkPlatformCollision(character, platform);
+      }
     }
   }
 
@@ -222,7 +221,7 @@ class Game {
   setKeys() {
     this.keyboardProcessor.getButton("Enter").executeDown = () => {
       const bullet = this.bulletfactory.createBullet(this.hero.bulletContext);
-      this.bullets.push(bullet);
+      this.entities.push(bullet);
     };
 
     this.keyboardProcessor.getButton(" ").executeDown = () => {

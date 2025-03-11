@@ -26,6 +26,8 @@ export class Runner extends Entity<RunnerView> {
   };
   private state = states.stay;
 
+  public type = "characterEnemy";
+
   constructor(view: RunnerView) {
     super(view);
 

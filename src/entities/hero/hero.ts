@@ -37,6 +37,8 @@ class Hero extends Entity<HeroView> {
 
   private heroWeaponUnit: HeroWeaponUnit;
 
+  public type = "hero";
+
   constructor(view: HeroView) {
     super(view);
 

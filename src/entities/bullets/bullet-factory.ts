@@ -6,6 +6,7 @@ export interface BulletContext {
   x: number;
   y: number;
   angle: number;
+  type: string;
 }
 
 export class BulletFactory {
@@ -22,6 +23,7 @@ export class BulletFactory {
     const bullet = new Bullet(view, bulletContext.angle);
     bullet.x = bulletContext.x;
     bullet.y = bulletContext.y;
+    bullet.type = bulletContext.type;
     return bullet;
   }
 }
