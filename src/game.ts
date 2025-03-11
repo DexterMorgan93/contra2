@@ -9,6 +9,7 @@ import { BulletFactory } from "./entities/bullets/bullet-factory";
 import { Bullet } from "./entities/bullets/bullet";
 import { Runner } from "./entities/enemies/runner/runner";
 import { RunnerFactory } from "./entities/enemies/runner/runner-factory";
+import { HeroFactory } from "./entities/hero/hero-factory";
 
 export interface CameraSettings {
   target: Hero;
@@ -36,9 +37,8 @@ class Game {
     this.worldContainer = new Container();
     this.pixiApp.stage.addChild(this.worldContainer);
 
-    this.hero = new Hero(this.worldContainer);
-    this.hero.x = 100;
-    this.hero.y = 100;
+    const herofactory = new HeroFactory(this.worldContainer);
+    this.hero = herofactory.create(100, 100);
 
     const platformFactory = new PlatformFactory(this.worldContainer);
 
@@ -72,7 +72,7 @@ class Game {
 
     this.camera = new Camera(cameraSettings);
 
-    this.bulletfactory = new BulletFactory();
+    this.bulletfactory = new BulletFactory(this.worldContainer);
 
     this.runnerFctory = new RunnerFactory(this.worldContainer);
     this.enemies.push(this.runnerFctory.create(800, 100));
@@ -88,7 +88,9 @@ class Game {
       let isDead = false;
 
       for (let bullet of this.bullets) {
-        if (this.isCheckAABB(bullet, this.enemies[i].getCollisionBox())) {
+        if (
+          this.isCheckAABB(bullet.collisionBox, this.enemies[i].collisionBox)
+        ) {
           isDead = true;
           bullet.isDead = true;
           break;
@@ -128,7 +130,7 @@ class Game {
       bullet.y > this.pixiApp.screen.height - this.worldContainer.y ||
       bullet.y < 0
     ) {
-      bullet.removeFromParent();
+      bullet.removeFromStage();
       this.bullets.splice(index, 1);
     }
   }
@@ -156,7 +158,7 @@ class Game {
   checkPlatformCollision(character: Hero | Runner, platform: Platform) {
     const prevPoint = character.getPrevpont;
     const collisionResult = this.getOrientCollisionResult(
-      character.getCollisionBox(),
+      character.collisionBox,
       platform,
       prevPoint
     );
@@ -221,7 +223,6 @@ class Game {
     this.keyboardProcessor.getButton("Enter").executeDown = () => {
       const bullet = this.bulletfactory.createBullet(this.hero.bulletContext);
       this.bullets.push(bullet);
-      this.worldContainer.addChild(bullet);
     };
 
     this.keyboardProcessor.getButton(" ").executeDown = () => {

@@ -1,7 +1,6 @@
-import { Container } from "pixi.js";
 import { HeroView } from "./hero-view";
-import { BulletContext } from "../bullets/bullet-factory";
 import { HeroWeaponUnit } from "./hero-weapon-unit";
+import { Entity } from "../entity";
 
 export interface IBulletContext {
   leftMove: boolean;
@@ -16,7 +15,7 @@ const states = {
   flyDown: "flyDown",
 };
 
-class Hero {
+class Hero extends Entity<HeroView> {
   private gravityForce = 0.2;
   private jumpForce = 9;
   private speed = 3;
@@ -33,19 +32,15 @@ class Hero {
   };
   private state = states.stay;
 
-  private view: HeroView;
-
   private isLay = false;
   private isStayUp = false;
 
   private heroWeaponUnit: HeroWeaponUnit;
 
-  constructor(appStage: Container) {
-    this.view = new HeroView();
-    this.view.showStay();
-    appStage.addChild(this.view);
+  constructor(view: HeroView) {
+    super(view);
 
-    this.heroWeaponUnit = new HeroWeaponUnit(this.view);
+    this.heroWeaponUnit = new HeroWeaponUnit(view);
 
     this.state = states.jump;
     this.view.showJump();
@@ -55,23 +50,6 @@ class Hero {
     y: 0,
     x: 0,
   }; // храним предыдущее знаение героя
-
-  getCollisionBox() {
-    return this.view.collisionbox;
-  }
-
-  get x() {
-    return this.view.x;
-  }
-  set x(value: number) {
-    this.view.x = value;
-  }
-  get y() {
-    return this.view.y;
-  }
-  set y(value: number) {
-    this.view.y = value;
-  }
 
   get bulletContext() {
     return this.heroWeaponUnit.bulletContext;
@@ -121,7 +99,7 @@ class Hero {
     this.state = states.stay;
     this.velocityY = 0;
 
-    this.y = platformY - this.view.collisionbox.height;
+    this.y = platformY - this.view.getCollisionbox.height;
   }
 
   jump() {

@@ -1,21 +1,13 @@
-import { Container, Graphics } from "pixi.js";
+import { Entity } from "../entity";
+import { BulletView } from "./bullet-view";
 
-export class Bullet extends Container {
+export class Bullet extends Entity<BulletView> {
   private speed = 10;
   private angleBullet: number;
-  isDead = false;
 
-  constructor(angleBullet: number) {
-    super();
+  constructor(view: BulletView, angleBullet: number) {
+    super(view);
     this.angleBullet = (angleBullet * Math.PI) / 180;
-    const view = new Graphics();
-    view.setStrokeStyle({
-      width: 2,
-      color: "0xffff00",
-    });
-    view.rect(0, 0, 5, 5);
-    view.stroke();
-    this.addChild(view);
   }
 
   update() {

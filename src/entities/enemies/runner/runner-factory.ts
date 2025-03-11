@@ -1,5 +1,6 @@
 import { Container } from "pixi.js";
 import { Runner } from "./runner";
+import { RunnerView } from "./runner-view";
 
 export class RunnerFactory {
   private worldContainer;
@@ -9,7 +10,9 @@ export class RunnerFactory {
   }
 
   create(x: number, y: number): Runner {
-    const runner = new Runner(this.worldContainer);
+    const view = new RunnerView();
+    this.worldContainer.addChild(view);
+    const runner = new Runner(view);
     runner.x = x;
     runner.y = y;
 

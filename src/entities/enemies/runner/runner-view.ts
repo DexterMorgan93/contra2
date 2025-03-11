@@ -71,7 +71,7 @@ export class RunnerView extends Container {
     this.stateMachine.currentstate = key;
   }
 
-  get collisionbox() {
+  get getCollisionbox() {
     this.collisionBox.x = this.x;
     this.collisionBox.y = this.y;
     return this.collisionBox;

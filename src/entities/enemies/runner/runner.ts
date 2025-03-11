@@ -1,5 +1,5 @@
-import { Container } from "pixi.js";
 import { RunnerView } from "./runner-view";
+import { Entity } from "../../entity";
 
 export interface IBulletContext {
   leftMove: boolean;
@@ -14,7 +14,7 @@ const states = {
   flyDown: "flyDown",
 };
 
-export class Runner {
+export class Runner extends Entity<RunnerView> {
   private gravityForce = 0.2;
   private jumpForce = 9;
   private speed = 3;
@@ -26,12 +26,8 @@ export class Runner {
   };
   private state = states.stay;
 
-  private view: RunnerView;
-
-  constructor(worldContainer: Container) {
-    this.view = new RunnerView();
-
-    worldContainer.addChild(this.view);
+  constructor(view: RunnerView) {
+    super(view);
 
     this.state = states.jump;
     this.view.showJump();
@@ -43,23 +39,6 @@ export class Runner {
     y: 0,
     x: 0,
   }; // храним предыдущее знаение героя
-
-  getCollisionBox() {
-    return this.view.collisionbox;
-  }
-
-  get x() {
-    return this.view.x;
-  }
-  set x(value: number) {
-    this.view.x = value;
-  }
-  get y() {
-    return this.view.y;
-  }
-  set y(value: number) {
-    this.view.y = value;
-  }
 
   get getPrevpont() {
     return this.prevPoint;
@@ -108,7 +87,7 @@ export class Runner {
     this.state = states.stay;
     this.velocityY = 0;
 
-    this.y = platformY - this.view.collisionbox.height;
+    this.y = platformY - this.view.getCollisionbox.height;
   }
 
   jump() {
