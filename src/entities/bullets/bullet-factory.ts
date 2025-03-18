@@ -3,6 +3,7 @@ import { Bullet } from "./bullet";
 import { BulletView } from "./bullet-view";
 import { Hero } from "../hero/hero";
 import { Runner } from "../enemies/runner/runner";
+import { Tourelle } from "../enemies/tourelle/tourelle";
 
 export interface BulletContext {
   x: number;
@@ -13,9 +14,12 @@ export interface BulletContext {
 
 export class BulletFactory {
   private worldContainer;
-  entities: (Bullet | Hero | Runner)[];
+  entities: (Bullet | Hero | Runner | Tourelle)[];
 
-  constructor(worldContainer: Container, entities: (Bullet | Hero | Runner)[]) {
+  constructor(
+    worldContainer: Container,
+    entities: (Bullet | Hero | Runner | Tourelle)[]
+  ) {
     this.worldContainer = worldContainer;
     this.entities = entities;
   }

@@ -1,8 +1,11 @@
 import { HeroView } from "./hero/hero-view";
 import { RunnerView } from "./enemies/runner/runner-view";
 import { BulletView } from "./bullets/bullet-view";
+import { TourelleView } from "./enemies/tourelle/tourelle-view";
 
-export abstract class Entity<T extends HeroView | RunnerView | BulletView> {
+export abstract class Entity<
+  T extends HeroView | RunnerView | BulletView | TourelleView
+> {
   protected view: T;
   isDead = false;
 

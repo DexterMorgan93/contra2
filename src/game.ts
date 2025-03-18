@@ -11,6 +11,8 @@ import { Runner } from "./entities/enemies/runner/runner";
 import { RunnerFactory } from "./entities/enemies/runner/runner-factory";
 import { HeroFactory } from "./entities/hero/hero-factory";
 import { Physics } from "./physics";
+import { TourellFactory } from "./entities/enemies/tourelle/tourelle-factory";
+import { Tourelle } from "./entities/enemies/tourelle/tourelle";
 
 export interface CameraSettings {
   target: Hero;
@@ -30,7 +32,7 @@ class Game {
   private runnerFctory: RunnerFactory;
   public keyboardProcessor: KeyboardProcessor;
 
-  private entities: (Hero | Runner | Bullet)[] = [];
+  private entities: (Hero | Runner | Bullet | Tourelle)[] = [];
 
   constructor(pixiApp: Application) {
     this.pixiApp = pixiApp;
@@ -80,6 +82,9 @@ class Game {
     this.runnerFctory = new RunnerFactory(this.worldContainer);
     this.entities.push(this.runnerFctory.create(800, 100));
     this.entities.push(this.runnerFctory.create(1000, 100));
+
+    const tourelle = new TourellFactory(this.worldContainer, this.hero);
+    this.entities.push(tourelle.create(500, 100));
   }
 
   update() {
@@ -98,7 +103,7 @@ class Game {
     this.camera.update();
   }
 
-  private checkDamage(entity: Hero | Runner | Bullet) {
+  private checkDamage(entity: Hero | Runner | Bullet | Tourelle) {
     const damagers = this.entities.filter(
       (damager) =>
         (entity.type === "characterEnemy" && damager.type === "heroBullet") ||
@@ -117,14 +122,17 @@ class Game {
     }
   }
 
-  private checkEntityStatus(entity: Hero | Runner | Bullet, i: number) {
+  private checkEntityStatus(
+    entity: Hero | Runner | Bullet | Tourelle,
+    i: number
+  ) {
     if (entity.isDead || this.isScreenOut(entity)) {
       entity.removeFromStage();
       this.entities.splice(i, 1);
     }
   }
 
-  private isScreenOut(entity: Hero | Runner | Bullet) {
+  private isScreenOut(entity: Hero | Runner | Bullet | Tourelle) {
     return (
       entity.x > this.pixiApp.screen.width - this.worldContainer.x ||
       entity.x < -this.worldContainer.x ||
@@ -133,7 +141,7 @@ class Game {
     );
   }
 
-  private checkPlatforms(character: Hero | Runner | Bullet) {
+  private checkPlatforms(character: Hero | Runner | Bullet | Tourelle) {
     if (character.isDead) {
       return;
     }
