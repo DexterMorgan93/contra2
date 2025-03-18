@@ -1,6 +1,8 @@
 import { Container } from "pixi.js";
 import { Bullet } from "./bullet";
 import { BulletView } from "./bullet-view";
+import { Hero } from "../hero/hero";
+import { Runner } from "../enemies/runner/runner";
 
 export interface BulletContext {
   x: number;
@@ -11,9 +13,11 @@ export interface BulletContext {
 
 export class BulletFactory {
   private worldContainer;
+  entities: (Bullet | Hero | Runner)[];
 
-  constructor(worldContainer: Container) {
+  constructor(worldContainer: Container, entities: (Bullet | Hero | Runner)[]) {
     this.worldContainer = worldContainer;
+    this.entities = entities;
   }
 
   createBullet(bulletContext: BulletContext) {
@@ -24,6 +28,6 @@ export class BulletFactory {
     bullet.x = bulletContext.x;
     bullet.y = bulletContext.y;
     bullet.type = bulletContext.type;
-    return bullet;
+    this.entities.push(bullet);
   }
 }

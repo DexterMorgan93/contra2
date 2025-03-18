@@ -10,6 +10,7 @@ import { Bullet } from "./entities/bullets/bullet";
 import { Runner } from "./entities/enemies/runner/runner";
 import { RunnerFactory } from "./entities/enemies/runner/runner-factory";
 import { HeroFactory } from "./entities/hero/hero-factory";
+import { Physics } from "./physics";
 
 export interface CameraSettings {
   target: Hero;
@@ -74,7 +75,7 @@ class Game {
 
     this.camera = new Camera(cameraSettings);
 
-    this.bulletfactory = new BulletFactory(this.worldContainer);
+    this.bulletfactory = new BulletFactory(this.worldContainer, this.entities);
 
     this.runnerFctory = new RunnerFactory(this.worldContainer);
     this.entities.push(this.runnerFctory.create(800, 100));
@@ -106,7 +107,7 @@ class Game {
     );
 
     for (const damager of damagers) {
-      if (this.isCheckAABB(damager.collisionBox, entity.collisionBox)) {
+      if (Physics.isCheckAABB(damager.collisionBox, entity.collisionBox)) {
         entity.dead();
         if (damager.type !== "characterEnemy") {
           damager.dead();
@@ -156,7 +157,7 @@ class Game {
 
   checkPlatformCollision(character: Hero | Runner, platform: Platform) {
     const prevPoint = character.getPrevpont;
-    const collisionResult = this.getOrientCollisionResult(
+    const collisionResult = Physics.getOrientCollisionResult(
       character.collisionBox,
       platform,
       prevPoint
@@ -177,51 +178,9 @@ class Game {
     }
   }
 
-  // абстрактный метод, который просто возвращает результат коллизии
-  getOrientCollisionResult(
-    aaRect: { x: number; y: number; width: number; height: number },
-    bbRect: Container,
-    aaPrevPoint: {
-      y: number;
-      x: number;
-    }
-  ) {
-    const collisionResult = {
-      horizontal: false,
-      vertical: false,
-    };
-
-    if (!this.isCheckAABB(aaRect, bbRect)) {
-      return collisionResult;
-    }
-
-    aaRect.y = aaPrevPoint.y;
-    if (!this.isCheckAABB(aaRect, bbRect)) {
-      collisionResult.vertical = true;
-      return collisionResult;
-    }
-
-    collisionResult.horizontal = true;
-    return collisionResult;
-  }
-
-  // коллизия
-  isCheckAABB(
-    entity: { x: number; y: number; width: number; height: number },
-    area: { x: number; y: number; width: number; height: number }
-  ) {
-    return (
-      entity.x < area.x + area.width &&
-      entity.x + entity.width > area.x &&
-      entity.y < area.y + area.height &&
-      entity.y + entity.height > area.y
-    );
-  }
-
   setKeys() {
     this.keyboardProcessor.getButton("Enter").executeDown = () => {
-      const bullet = this.bulletfactory.createBullet(this.hero.bulletContext);
-      this.entities.push(bullet);
+      this.bulletfactory.createBullet(this.hero.bulletContext);
     };
 
     this.keyboardProcessor.getButton(" ").executeDown = () => {
