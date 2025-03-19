@@ -35,6 +35,7 @@ class Hero extends Entity<HeroView> {
 
   private isLay = false;
   private isStayUp = false;
+  public isFall = false;
 
   private heroWeaponUnit: HeroWeaponUnit;
 
@@ -76,6 +77,7 @@ class Hero extends Entity<HeroView> {
     if (this.velocityY > 0) {
       if (!(this.state === states.jump || this.state === states.flyDown)) {
         this.view.showFall();
+        this.isFall = true;
       }
       this.state = states.flyDown;
     }
@@ -103,6 +105,7 @@ class Hero extends Entity<HeroView> {
       fakeButtonContext.arrowDown = this.isStayUp;
       this.state = states.stay;
       this.setView(fakeButtonContext);
+      this.isFall = false;
     }
 
     this.state = states.stay;
@@ -123,6 +126,7 @@ class Hero extends Entity<HeroView> {
     // прыжок вниз
     this.state = states.jump;
     this.view.showFall();
+    this.isFall = true;
   }
 
   isJumpState() {

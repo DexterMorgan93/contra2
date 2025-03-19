@@ -164,6 +164,13 @@ class Game {
         this.checkPlatformCollision(character, platform);
       }
     }
+
+    if (
+      character.type === EntityType.hero &&
+      character.x < -this.worldContainer.x
+    ) {
+      character.x = character.getPrevpont.x;
+    }
   }
 
   /* пробегаемся по всем платформам и останавливаем персонажа при коллизии
@@ -198,7 +205,7 @@ class Game {
 
   setKeys() {
     this.keyboardProcessor.getButton("Enter").executeDown = () => {
-      if (!this.hero.isDead) {
+      if (!this.hero.isDead && !this.hero.isFall) {
         this.weapon.fire(this.hero.bulletContext);
       }
     };
