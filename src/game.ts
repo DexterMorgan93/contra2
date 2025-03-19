@@ -6,15 +6,14 @@ import { Platform } from "./entities/platforms/platform";
 import { Box } from "./entities/platforms/box";
 import { Camera } from "./camera";
 import { BulletFactory } from "./entities/bullets/bullet-factory";
-import { Bullet } from "./entities/bullets/bullet";
 import { Runner } from "./entities/enemies/runner/runner";
 import { RunnerFactory } from "./entities/enemies/runner/runner-factory";
 import { HeroFactory } from "./entities/hero/hero-factory";
 import { Physics } from "./physics";
 import { TourellFactory } from "./entities/enemies/tourelle/tourelle-factory";
-import { Tourelle } from "./entities/enemies/tourelle/tourelle";
 import { EntityType } from "./entities/entity-type";
 import { Entity } from "./entities/entity";
+import { Weapon } from "./weapon";
 
 export interface CameraSettings {
   target: Hero;
@@ -33,6 +32,7 @@ class Game {
   private camera: Camera;
   private worldContainer: Container;
   private bulletfactory: BulletFactory;
+  private weapon: Weapon;
   private runnerFctory: RunnerFactory;
   public keyboardProcessor: KeyboardProcessor;
 
@@ -82,6 +82,9 @@ class Game {
     this.camera = new Camera(cameraSettings);
 
     this.bulletfactory = new BulletFactory(this.worldContainer, this.entities);
+
+    this.weapon = new Weapon(this.bulletfactory);
+    this.weapon.setWeapon(2);
 
     this.runnerFctory = new RunnerFactory(this.worldContainer);
     this.entities.push(this.runnerFctory.create(800, 100));
@@ -195,7 +198,9 @@ class Game {
 
   setKeys() {
     this.keyboardProcessor.getButton("Enter").executeDown = () => {
-      this.bulletfactory.createBullet(this.hero.bulletContext);
+      if (!this.hero.isDead) {
+        this.weapon.fire(this.hero.bulletContext);
+      }
     };
 
     this.keyboardProcessor.getButton(" ").executeDown = () => {
