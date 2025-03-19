@@ -1,13 +1,7 @@
-import { Container, Graphics } from "pixi.js";
+import { Graphics } from "pixi.js";
+import { EntityView } from "../entity-view";
 
-export class BulletView extends Container {
-  private collisionBox = {
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  };
-
+export class BulletView extends EntityView {
   constructor() {
     super();
 
@@ -22,11 +16,5 @@ export class BulletView extends Container {
     view.rect(0, 0, 5, 5);
     view.stroke();
     this.addChild(view);
-  }
-
-  get getCollisionbox() {
-    this.collisionBox.x = this.x;
-    this.collisionBox.y = this.y;
-    return this.collisionBox;
   }
 }

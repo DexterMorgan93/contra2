@@ -1,7 +1,8 @@
 import { Container, Graphics } from "pixi.js";
+import { EntityType } from "../entity-type";
 
 class Box extends Container {
-  public type = "box";
+  public type = EntityType.box;
   public isStep = false;
 
   constructor() {

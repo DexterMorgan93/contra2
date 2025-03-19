@@ -13,6 +13,8 @@ import { HeroFactory } from "./entities/hero/hero-factory";
 import { Physics } from "./physics";
 import { TourellFactory } from "./entities/enemies/tourelle/tourelle-factory";
 import { Tourelle } from "./entities/enemies/tourelle/tourelle";
+import { EntityType } from "./entities/entity-type";
+import { Entity } from "./entities/entity";
 
 export interface CameraSettings {
   target: Hero;
@@ -21,6 +23,8 @@ export interface CameraSettings {
   maxWorldWidth: number;
   isBackScrollX: boolean;
 }
+
+type CharacterEntity = Hero | Runner;
 
 class Game {
   private pixiApp;
@@ -32,7 +36,7 @@ class Game {
   private runnerFctory: RunnerFactory;
   public keyboardProcessor: KeyboardProcessor;
 
-  private entities: (Hero | Runner | Bullet | Tourelle)[] = [];
+  private entities: Entity[] = [];
 
   constructor(pixiApp: Application) {
     this.pixiApp = pixiApp;
@@ -83,7 +87,11 @@ class Game {
     this.entities.push(this.runnerFctory.create(800, 100));
     this.entities.push(this.runnerFctory.create(1000, 100));
 
-    const tourelle = new TourellFactory(this.worldContainer, this.hero);
+    const tourelle = new TourellFactory(
+      this.worldContainer,
+      this.hero,
+      this.bulletfactory
+    );
     this.entities.push(tourelle.create(500, 100));
   }
 
@@ -92,9 +100,9 @@ class Game {
       const entity = this.entities[i];
       entity.update();
 
-      if (entity.type === "hero" || entity.type === "characterEnemy") {
-        this.checkDamage(entity);
-        this.checkPlatforms(entity);
+      if (entity.type === EntityType.hero || entity.type === EntityType.enemy) {
+        this.checkDamage(entity as CharacterEntity);
+        this.checkPlatforms(entity as CharacterEntity);
       }
 
       this.checkEntityStatus(entity, i);
@@ -103,18 +111,20 @@ class Game {
     this.camera.update();
   }
 
-  private checkDamage(entity: Hero | Runner | Bullet | Tourelle) {
+  private checkDamage(entity: CharacterEntity) {
     const damagers = this.entities.filter(
       (damager) =>
-        (entity.type === "characterEnemy" && damager.type === "heroBullet") ||
-        (entity.type === "hero" &&
-          (damager.type === "enemyBullet" || damager.type === "characterEnemy"))
+        (entity.type === EntityType.enemy &&
+          damager.type === EntityType.heroBullet) ||
+        (entity.type === EntityType.hero &&
+          (damager.type === EntityType.enemyBullet ||
+            damager.type === EntityType.enemy))
     );
 
     for (const damager of damagers) {
       if (Physics.isCheckAABB(damager.collisionBox, entity.collisionBox)) {
-        entity.dead();
-        if (damager.type !== "characterEnemy") {
+        entity.damage();
+        if (damager.type !== EntityType.enemy) {
           damager.dead();
         }
         break;
@@ -122,17 +132,14 @@ class Game {
     }
   }
 
-  private checkEntityStatus(
-    entity: Hero | Runner | Bullet | Tourelle,
-    i: number
-  ) {
+  private checkEntityStatus(entity: Entity, i: number) {
     if (entity.isDead || this.isScreenOut(entity)) {
       entity.removeFromStage();
       this.entities.splice(i, 1);
     }
   }
 
-  private isScreenOut(entity: Hero | Runner | Bullet | Tourelle) {
+  private isScreenOut(entity: Entity) {
     return (
       entity.x > this.pixiApp.screen.width - this.worldContainer.x ||
       entity.x < -this.worldContainer.x ||
@@ -141,14 +148,14 @@ class Game {
     );
   }
 
-  private checkPlatforms(character: Hero | Runner | Bullet | Tourelle) {
-    if (character.isDead) {
+  private checkPlatforms(character: CharacterEntity) {
+    if (character.isDead || !character.isGravitable) {
       return;
     }
 
     for (let platform of this.platforms) {
       if (character instanceof Hero || character instanceof Runner) {
-        if (character.isJumpState() && platform.type !== "box") {
+        if (character.isJumpState() && platform.type !== EntityType.box) {
           continue;
         }
         this.checkPlatformCollision(character, platform);
@@ -163,7 +170,7 @@ class Game {
        Это указывает на то, что именно горизонтальное движение привело к столкновению.
        огда герой возвращается по горизонтали, то есть его x откатывается до prevPoint.x, а значение y возвращается к currY. */
 
-  checkPlatformCollision(character: Hero | Runner, platform: Platform) {
+  checkPlatformCollision(character: CharacterEntity, platform: Platform) {
     const prevPoint = character.getPrevpont;
     const collisionResult = Physics.getOrientCollisionResult(
       character.collisionBox,
@@ -176,7 +183,7 @@ class Game {
       character.y = prevPoint.y;
       character.stay(platform.y);
     }
-    if (collisionResult.horizontal && platform.type === "box") {
+    if (collisionResult.horizontal && platform.type === EntityType.box) {
       if (platform.isStep) {
         // если персонаж сразу залазит на платформу, как ступенька
         character.stay(platform.y);

@@ -1,10 +1,11 @@
 import { Entity } from "../entity";
+import { EntityType } from "../entity-type";
 import { BulletView } from "./bullet-view";
 
 export class Bullet extends Entity<BulletView> {
   private speed = 10;
   private angleBullet: number;
-  public type = "";
+  declare type: EntityType;
 
   constructor(view: BulletView, angleBullet: number) {
     super(view);

@@ -1,14 +1,8 @@
 import { Container, Graphics } from "pixi.js";
+import { EntityView } from "../../entity-view";
 
-export class TourelleView extends Container {
+export class TourelleView extends EntityView {
   private gunView: Graphics;
-
-  private collisionBox = {
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  };
 
   constructor() {
     super();
@@ -31,6 +25,9 @@ export class TourelleView extends Container {
     this.gunView.pivot.set(5, 5);
     view.stroke();
     this.addChild(this.gunView);
+
+    this.collisionBox.width = 100;
+    this.collisionBox.height = 100;
   }
 
   get gunRotation() {
@@ -39,11 +36,5 @@ export class TourelleView extends Container {
 
   set gunRotation(value: number) {
     this.gunView.rotation = value;
-  }
-
-  get getCollisionbox() {
-    this.collisionBox.x = this.pivot.x;
-    this.collisionBox.y = this.pivot.y;
-    return this.collisionBox;
   }
 }

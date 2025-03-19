@@ -1,6 +1,7 @@
 import { HeroView } from "./hero-view";
 import { HeroWeaponUnit } from "./hero-weapon-unit";
 import { Entity } from "../entity";
+import { EntityType } from "../entity-type";
 
 export interface IBulletContext {
   leftMove: boolean;
@@ -37,7 +38,7 @@ class Hero extends Entity<HeroView> {
 
   private heroWeaponUnit: HeroWeaponUnit;
 
-  public type = "hero";
+  public type = EntityType.hero;
 
   constructor(view: HeroView) {
     super(view);
@@ -46,6 +47,8 @@ class Hero extends Entity<HeroView> {
 
     this.state = states.jump;
     this.view.showJump();
+
+    this.isGravitable = true;
   }
 
   private prevPoint = {
@@ -82,6 +85,10 @@ class Hero extends Entity<HeroView> {
     this.y += this.velocityY;
   }
 
+  damage() {
+    this.dead();
+  }
+
   stay(platformY: number) {
     if (this.state === "jump" || this.state === states.flyDown) {
       const fakeButtonContext = {
@@ -101,7 +108,7 @@ class Hero extends Entity<HeroView> {
     this.state = states.stay;
     this.velocityY = 0;
 
-    this.y = platformY - this.view.getCollisionbox.height;
+    this.y = platformY - this.view.collisionBox.height;
   }
 
   jump() {
@@ -177,7 +184,6 @@ class Hero extends Entity<HeroView> {
       }
     } else {
       if (buttonContext.arrowUp) {
-        console.log(buttonContext);
         this.view.showStayUp();
       } else if (buttonContext.arrowDown) {
         this.view.showLay();

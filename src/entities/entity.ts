@@ -1,13 +1,11 @@
-import { HeroView } from "./hero/hero-view";
-import { RunnerView } from "./enemies/runner/runner-view";
-import { BulletView } from "./bullets/bullet-view";
-import { TourelleView } from "./enemies/tourelle/tourelle-view";
+import type { EntityType } from "./entity-type";
+import { EntityView } from "./entity-view";
 
-export abstract class Entity<
-  T extends HeroView | RunnerView | BulletView | TourelleView
-> {
-  protected view: T;
+export class Entity<T extends EntityView = EntityView> {
+  protected view;
   isDead = false;
+  gravitable = false;
+  type!: EntityType;
 
   constructor(view: T) {
     this.view = view;
@@ -34,8 +32,15 @@ export abstract class Entity<
     this.isDead = true;
   }
 
+  get isGravitable() {
+    return this.gravitable;
+  }
+  set isGravitable(value: boolean) {
+    this.gravitable = value;
+  }
+
   get collisionBox() {
-    return this.view.getCollisionbox;
+    return this.view.collisionBox;
   }
 
   removeFromStage() {
@@ -43,4 +48,6 @@ export abstract class Entity<
       this.view.removeFromParent();
     }
   }
+
+  update() {}
 }

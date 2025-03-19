@@ -1,25 +1,21 @@
 import { Container } from "pixi.js";
 import { Bullet } from "./bullet";
 import { BulletView } from "./bullet-view";
-import { Hero } from "../hero/hero";
-import { Runner } from "../enemies/runner/runner";
-import { Tourelle } from "../enemies/tourelle/tourelle";
+import { EntityType } from "../entity-type";
+import { Entity } from "../entity";
 
 export interface BulletContext {
   x: number;
   y: number;
   angle: number;
-  type: string;
+  type: EntityType;
 }
 
 export class BulletFactory {
   private worldContainer;
-  entities: (Bullet | Hero | Runner | Tourelle)[];
+  entities: Entity[];
 
-  constructor(
-    worldContainer: Container,
-    entities: (Bullet | Hero | Runner | Tourelle)[]
-  ) {
+  constructor(worldContainer: Container, entities: Entity[]) {
     this.worldContainer = worldContainer;
     this.entities = entities;
   }

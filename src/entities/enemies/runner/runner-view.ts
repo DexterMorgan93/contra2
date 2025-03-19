@@ -1,4 +1,5 @@
 import { Container, Graphics } from "pixi.js";
+import { EntityView } from "../../entity-view";
 
 type StateKeys = "run" | "jump" | "fall";
 
@@ -7,15 +8,8 @@ type StateMachine = {
   states: Record<StateKeys, Graphics>;
 };
 
-export class RunnerView extends Container {
+export class RunnerView extends EntityView {
   private bounds = {
-    width: 0,
-    height: 0,
-  };
-
-  private collisionBox = {
-    x: 0,
-    y: 0,
     width: 0,
     height: 0,
   };
@@ -69,12 +63,6 @@ export class RunnerView extends Container {
 
     this.stateMachine.states[key].visible = true;
     this.stateMachine.currentstate = key;
-  }
-
-  get getCollisionbox() {
-    this.collisionBox.x = this.x;
-    this.collisionBox.y = this.y;
-    return this.collisionBox;
   }
 
   get isFlpped() {

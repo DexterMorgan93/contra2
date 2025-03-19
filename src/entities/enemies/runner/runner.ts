@@ -1,5 +1,6 @@
 import { RunnerView } from "./runner-view";
 import { Entity } from "../../entity";
+import { EntityType } from "../../entity-type";
 
 export interface IBulletContext {
   leftMove: boolean;
@@ -26,7 +27,7 @@ export class Runner extends Entity<RunnerView> {
   };
   private state = states.stay;
 
-  public type = "characterEnemy";
+  public type = EntityType.enemy;
 
   constructor(view: RunnerView) {
     super(view);
@@ -35,6 +36,8 @@ export class Runner extends Entity<RunnerView> {
     this.view.showJump();
 
     this.movement.x = -1;
+
+    this.isGravitable = true;
   }
 
   private prevPoint = {
@@ -71,6 +74,10 @@ export class Runner extends Entity<RunnerView> {
     this.y += this.velocityY;
   }
 
+  damage() {
+    this.dead();
+  }
+
   stay(platformY: number) {
     if (this.state === "jump" || this.state === states.flyDown) {
       const fakeButtonContext = {
@@ -89,7 +96,7 @@ export class Runner extends Entity<RunnerView> {
     this.state = states.stay;
     this.velocityY = 0;
 
-    this.y = platformY - this.view.getCollisionbox.height;
+    this.y = platformY - this.view.collisionBox.height;
   }
 
   jump() {
