@@ -1,4 +1,4 @@
-import { Container, Graphics } from "pixi.js";
+import { Graphics } from "pixi.js";
 import { EntityView } from "../../entity-view";
 
 export class TourelleView extends EntityView {

@@ -14,6 +14,7 @@ import { TourellFactory } from "./entities/enemies/tourelle/tourelle-factory";
 import { EntityType } from "./entities/entity-type";
 import { Entity } from "./entities/entity";
 import { Weapon } from "./weapon";
+import { World } from "./world";
 
 export interface CameraSettings {
   target: Hero;
@@ -30,7 +31,7 @@ class Game {
   private hero;
   private platforms: (Platform | Box)[] = [];
   private camera: Camera;
-  private worldContainer: Container;
+  private worldContainer: World;
   private bulletfactory: BulletFactory;
   private weapon: Weapon;
   private runnerFctory: RunnerFactory;
@@ -41,10 +42,10 @@ class Game {
   constructor(pixiApp: Application) {
     this.pixiApp = pixiApp;
 
-    this.worldContainer = new Container();
+    this.worldContainer = new World();
     this.pixiApp.stage.addChild(this.worldContainer);
 
-    const herofactory = new HeroFactory(this.worldContainer);
+    const herofactory = new HeroFactory(this.worldContainer.game);
     this.hero = herofactory.create(100, 100);
 
     this.entities.push(this.hero);
@@ -52,7 +53,6 @@ class Game {
     const platformFactory = new PlatformFactory(this.worldContainer);
 
     this.platforms.push(platformFactory.createPlatform(100, 400));
-    // this.platforms.push(platformFactory.createPlatform(290, 400));
     this.platforms.push(platformFactory.createPlatform(480, 400));
     this.platforms.push(platformFactory.createPlatform(670, 400));
     this.platforms.push(platformFactory.createPlatform(1060, 400));
@@ -81,17 +81,20 @@ class Game {
 
     this.camera = new Camera(cameraSettings);
 
-    this.bulletfactory = new BulletFactory(this.worldContainer, this.entities);
+    this.bulletfactory = new BulletFactory(
+      this.worldContainer.game,
+      this.entities
+    );
 
     this.weapon = new Weapon(this.bulletfactory);
     this.weapon.setWeapon(2);
 
-    this.runnerFctory = new RunnerFactory(this.worldContainer);
+    this.runnerFctory = new RunnerFactory(this.worldContainer.game);
     this.entities.push(this.runnerFctory.create(800, 100));
     this.entities.push(this.runnerFctory.create(1000, 100));
 
     const tourelle = new TourellFactory(
-      this.worldContainer,
+      this.worldContainer.game,
       this.hero,
       this.bulletfactory
     );
