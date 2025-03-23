@@ -1,6 +1,7 @@
 import { RunnerView } from "./runner-view";
 import { Entity } from "../../entity";
 import { EntityType } from "../../entity-type";
+import { Hero } from "../../hero/hero";
 
 export interface IBulletContext {
   leftMove: boolean;
@@ -26,11 +27,16 @@ export class Runner extends Entity<RunnerView> {
     y: 0,
   };
   private state = states.stay;
+  private target: Hero;
 
   public type = EntityType.enemy;
 
-  constructor(view: RunnerView) {
+  jumpBehaviorKoef = 0.4;
+
+  constructor(view: RunnerView, target: Hero) {
     super(view);
+
+    this.target = target;
 
     this.state = states.jump;
     this.view.showJump();
@@ -38,6 +44,7 @@ export class Runner extends Entity<RunnerView> {
     this.movement.x = -1;
 
     this.isGravitable = true;
+    this.isActive = false;
   }
 
   private prevPoint = {
@@ -50,6 +57,14 @@ export class Runner extends Entity<RunnerView> {
   }
 
   update() {
+    if (!this.isActive) {
+      // начинает действовать при приближении героя
+      if (this.x - this.target.x < 512 + this.collisionBox.width * 2) {
+        this.isActive = true;
+      }
+      return;
+    }
+
     this.prevPoint.x = this.x; // храним предыдущее знаение героя
     this.prevPoint.y = this.y; // храним предыдущее знаение героя
 
@@ -60,10 +75,10 @@ export class Runner extends Entity<RunnerView> {
     // проверяем, находится ли герой в прыжке и в падении
     if (this.velocityY > 0) {
       if (!(this.state === states.jump || this.state === states.flyDown)) {
-        if (Math.random() > 0.4) {
-          this.jump();
-        } else {
+        if (Math.random() > this.jumpBehaviorKoef) {
           this.view.showFall();
+        } else {
+          this.jump();
         }
       }
       if (this.velocityY > 0) this.state = states.flyDown;

@@ -6,15 +6,14 @@ import { Platform } from "./entities/platforms/platform";
 import { Camera } from "./camera";
 import { BulletFactory } from "./entities/bullets/bullet-factory";
 import { Runner } from "./entities/enemies/runner/runner";
-import { RunnerFactory } from "./entities/enemies/runner/runner-factory";
 import { HeroFactory } from "./entities/hero/hero-factory";
 import { Physics } from "./physics";
-import { TourellFactory } from "./entities/enemies/tourelle/tourelle-factory";
 import { EntityType } from "./entities/entity-type";
 import { Entity } from "./entities/entity";
 import { Weapon } from "./weapon";
 import { World } from "./world";
 import { SceneFactory } from "./scene-factory";
+import { EnemyFactory } from "./entities/enemies/enemy-factory";
 
 export interface CameraSettings {
   target: Hero;
@@ -34,7 +33,6 @@ class Game {
   private worldContainer: World;
   private bulletfactory: BulletFactory;
   private weapon: Weapon;
-  private runnerFctory: RunnerFactory;
   public keyboardProcessor: KeyboardProcessor;
 
   private entities: Entity[] = [];
@@ -45,6 +43,11 @@ class Game {
     this.worldContainer = new World();
     this.pixiApp.stage.addChild(this.worldContainer);
 
+    this.bulletfactory = new BulletFactory(
+      this.worldContainer.game,
+      this.entities
+    );
+
     const herofactory = new HeroFactory(this.worldContainer.game);
     this.hero = herofactory.create(160, 100);
 
@@ -52,7 +55,18 @@ class Game {
 
     const platformFactory = new PlatformFactory(this.worldContainer);
 
-    const sceneFactory = new SceneFactory(this.platforms, platformFactory);
+    const enemyFactory = new EnemyFactory(
+      this.worldContainer.game,
+      this.hero,
+      this.bulletfactory,
+      this.entities
+    );
+
+    const sceneFactory = new SceneFactory(
+      this.platforms,
+      platformFactory,
+      enemyFactory
+    );
     sceneFactory.createScene();
 
     this.keyboardProcessor = new KeyboardProcessor(this);
@@ -68,24 +82,8 @@ class Game {
 
     this.camera = new Camera(cameraSettings);
 
-    this.bulletfactory = new BulletFactory(
-      this.worldContainer.game,
-      this.entities
-    );
-
     this.weapon = new Weapon(this.bulletfactory);
     this.weapon.setWeapon(2);
-
-    this.runnerFctory = new RunnerFactory(this.worldContainer.game);
-    // this.entities.push(this.runnerFctory.create(800, 100));
-    // this.entities.push(this.runnerFctory.create(1000, 100));
-
-    // const tourelle = new TourellFactory(
-    //   this.worldContainer.game,
-    //   this.hero,
-    //   this.bulletfactory
-    // );
-    // this.entities.push(tourelle.create(500, 100));
   }
 
   update() {
@@ -132,13 +130,27 @@ class Game {
     }
   }
 
-  private isScreenOut(entity: Entity) {
-    return (
-      entity.x > this.pixiApp.screen.width - this.worldContainer.x ||
-      entity.x < -this.worldContainer.x ||
-      entity.y > this.pixiApp.screen.height ||
-      entity.y < 0
-    );
+  private isScreenOut(entity: Entity): boolean {
+    if (
+      entity.type === EntityType.heroBullet ||
+      entity.type === EntityType.enemyBullet
+    ) {
+      return (
+        entity.x > this.pixiApp.screen.width - this.worldContainer.x ||
+        entity.x < -this.worldContainer.x ||
+        entity.y > this.pixiApp.screen.height ||
+        entity.y < 0
+      );
+    } else if (
+      entity.type === EntityType.enemy ||
+      entity.type === EntityType.hero
+    ) {
+      return (
+        entity.x < -this.worldContainer.x ||
+        entity.y > this.pixiApp.screen.height
+      );
+    }
+    return false;
   }
 
   private checkPlatforms(character: CharacterEntity) {

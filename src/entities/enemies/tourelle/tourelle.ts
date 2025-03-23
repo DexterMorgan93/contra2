@@ -15,12 +15,23 @@ export class Tourelle extends Entity<TourelleView> {
     super(view);
     this.target = target;
     this.buletFactory = buletFactory;
+
+    this.isActive = false;
   }
 
   update() {
     if (this.target.isDead) {
       return;
     }
+
+    if (!this.isActive) {
+      // начинает действовать при приближении героя
+      if (this.x - this.target.x < 512 + this.collisionBox.width * 2) {
+        this.isActive = true;
+      }
+      return;
+    }
+
     // вычисляем угол
     let angle = Math.atan2(this.target.y - this.y, this.target.x - this.x);
     this.view.rotation = angle;

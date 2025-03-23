@@ -6,6 +6,7 @@ export class Entity<T extends EntityView = EntityView> {
   isDead = false;
   gravitable = false;
   type!: EntityType;
+  #isActive = false;
 
   constructor(view: T) {
     this.view = view;
@@ -16,6 +17,13 @@ export class Entity<T extends EntityView = EntityView> {
   }
   set x(value: number) {
     this.view.x = value;
+  }
+
+  get isActive() {
+    return this.#isActive;
+  }
+  set isActive(value: boolean) {
+    this.#isActive = value;
   }
 
   get y() {

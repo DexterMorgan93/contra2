@@ -50,6 +50,7 @@ class Hero extends Entity<HeroView> {
     this.view.showJump();
 
     this.isGravitable = true;
+    this.isActive = true;
   }
 
   private prevPoint = {
