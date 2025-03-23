@@ -14,6 +14,7 @@ import { Weapon } from "./weapon";
 import { World } from "./world";
 import { SceneFactory } from "./scene-factory";
 import { EnemyFactory } from "./entities/enemies/enemy-factory";
+import AssetsFactory from "./load-assets";
 
 export interface CameraSettings {
   target: Hero;
@@ -34,10 +35,11 @@ class Game {
   private bulletfactory: BulletFactory;
   private weapon: Weapon;
   public keyboardProcessor: KeyboardProcessor;
+  public assets!: AssetsFactory;
 
   private entities: Entity[] = [];
 
-  constructor(pixiApp: Application) {
+  constructor(pixiApp: Application, assets: AssetsFactory) {
     this.pixiApp = pixiApp;
 
     this.worldContainer = new World();

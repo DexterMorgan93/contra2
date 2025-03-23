@@ -13,6 +13,7 @@
     "vite": "^6.1.0"
   },
   "dependencies": {
+    "@pixi/core": "^7.4.3",
     "@pixi/devtools": "^2.0.1",
     "pixi.js": "^8.8.0"
   }
