@@ -12,7 +12,7 @@ class Box extends Container {
       width: 2,
       color: 0x00ff,
     });
-    view.rect(0, 0, 190, 20);
+    view.rect(0, 0, 128, 24);
     view.stroke();
     this.addChild(view);
   }

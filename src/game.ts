@@ -15,6 +15,7 @@ import { EntityType } from "./entities/entity-type";
 import { Entity } from "./entities/entity";
 import { Weapon } from "./weapon";
 import { World } from "./world";
+import { SceneFactory } from "./scene-factory";
 
 export interface CameraSettings {
   target: Hero;
@@ -46,27 +47,14 @@ class Game {
     this.pixiApp.stage.addChild(this.worldContainer);
 
     const herofactory = new HeroFactory(this.worldContainer.game);
-    this.hero = herofactory.create(100, 100);
+    this.hero = herofactory.create(160, 100);
 
     this.entities.push(this.hero);
 
     const platformFactory = new PlatformFactory(this.worldContainer);
 
-    this.platforms.push(platformFactory.createPlatform(100, 400));
-    this.platforms.push(platformFactory.createPlatform(480, 400));
-    this.platforms.push(platformFactory.createPlatform(670, 400));
-    this.platforms.push(platformFactory.createPlatform(1060, 400));
-
-    this.platforms.push(platformFactory.createPlatform(290, 550));
-
-    this.platforms.push(platformFactory.createBox(0, 745));
-    this.platforms.push(platformFactory.createBox(190, 745));
-    this.platforms.push(platformFactory.createBox(590, 745));
-    this.platforms.push(platformFactory.createBox(990, 745));
-
-    const box = platformFactory.createBox(380, 725);
-    box.isStep = true;
-    this.platforms.push(box);
+    const sceneFactory = new SceneFactory(this.platforms, platformFactory);
+    sceneFactory.createScene();
 
     this.keyboardProcessor = new KeyboardProcessor(this);
     this.setKeys();
@@ -90,15 +78,15 @@ class Game {
     this.weapon.setWeapon(2);
 
     this.runnerFctory = new RunnerFactory(this.worldContainer.game);
-    this.entities.push(this.runnerFctory.create(800, 100));
-    this.entities.push(this.runnerFctory.create(1000, 100));
+    // this.entities.push(this.runnerFctory.create(800, 100));
+    // this.entities.push(this.runnerFctory.create(1000, 100));
 
-    const tourelle = new TourellFactory(
-      this.worldContainer.game,
-      this.hero,
-      this.bulletfactory
-    );
-    this.entities.push(tourelle.create(500, 100));
+    // const tourelle = new TourellFactory(
+    //   this.worldContainer.game,
+    //   this.hero,
+    //   this.bulletfactory
+    // );
+    // this.entities.push(tourelle.create(500, 100));
   }
 
   update() {
