@@ -1,10 +1,15 @@
-import { Container } from "pixi.js";
+interface IRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 export class Physics {
   // абстрактный метод, который просто возвращает результат коллизии
   static getOrientCollisionResult(
-    aaRect: { x: number; y: number; width: number; height: number },
-    bbRect: Container,
+    aaRect: IRect,
+    bbRect: IRect,
     aaPrevPoint: {
       y: number;
       x: number;

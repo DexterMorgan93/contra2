@@ -3,7 +3,6 @@ import { Hero } from "./entities/hero/hero";
 import { PlatformFactory } from "./entities/platforms/platform-factory";
 import { KeyboardProcessor } from "./keyboard-processor";
 import { Platform } from "./entities/platforms/platform";
-import { Box } from "./entities/platforms/box";
 import { Camera } from "./camera";
 import { BulletFactory } from "./entities/bullets/bullet-factory";
 import { Runner } from "./entities/enemies/runner/runner";
@@ -30,7 +29,7 @@ type CharacterEntity = Hero | Runner;
 class Game {
   private pixiApp;
   private hero;
-  private platforms: (Platform | Box)[] = [];
+  private platforms: Platform[] = [];
   private camera: Camera;
   private worldContainer: World;
   private bulletfactory: BulletFactory;
@@ -175,7 +174,7 @@ class Game {
     const prevPoint = character.getPrevpont;
     const collisionResult = Physics.getOrientCollisionResult(
       character.collisionBox,
-      platform,
+      platform.collisionBox,
       prevPoint
     );
 

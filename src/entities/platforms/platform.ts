@@ -1,19 +1,11 @@
-import { Container, Graphics } from "pixi.js";
+import { Entity } from "../entity";
+import { PlatformView } from "./platform-view";
 
-class Platform extends Container {
-  public type = "platform";
+class Platform extends Entity<PlatformView> {
   public isStep = false;
 
-  constructor() {
-    super();
-    const view = new Graphics();
-    view.setStrokeStyle({
-      width: 2,
-      color: 0x00ff00,
-    });
-    view.rect(0, 0, 128, 24);
-    view.stroke();
-    this.addChild(view);
+  constructor(view: PlatformView) {
+    super(view);
   }
 }
 
