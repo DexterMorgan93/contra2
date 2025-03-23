@@ -16,6 +16,7 @@ export class SceneFactory {
     this.createGround();
     this.createWater();
     this.createBossWall();
+    this.createBridge();
   }
 
   private createPlatforms() {
@@ -66,6 +67,11 @@ export class SceneFactory {
   private createBossWall() {
     let xIndexes = [52];
     this.create(xIndexes, 170, this.#platformFactory.createBossWall);
+  }
+
+  private createBridge() {
+    let xIndexes = [16, 17, 18, 19];
+    this.create(xIndexes, 384, this.#platformFactory.createBridge);
   }
 
   private create(
