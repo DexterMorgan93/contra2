@@ -1,4 +1,6 @@
 import { EnemyFactory } from "./entities/enemies/enemy-factory";
+import { Entity } from "./entities/entity";
+import { Hero } from "./entities/hero/hero";
 import { Platform } from "./entities/platforms/platform";
 import { PlatformFactory } from "./entities/platforms/platform-factory";
 
@@ -7,15 +9,21 @@ export class SceneFactory {
   #platformFactory: PlatformFactory;
   #blockSize = 128;
   #enemyFactory: EnemyFactory;
+  #entities: Entity[] = [];
+  #target: Hero;
 
   constructor(
     platforms: Platform[],
+    entities: Entity[],
     platformFactory: PlatformFactory,
-    enemyFactory: EnemyFactory
+    enemyFactory: EnemyFactory,
+    target: Hero
   ) {
     this.#platforms = platforms;
+    this.#entities = entities;
     this.#platformFactory = platformFactory;
     this.#enemyFactory = enemyFactory;
+    this.#target = target;
   }
 
   createScene() {
@@ -23,8 +31,10 @@ export class SceneFactory {
     this.createGround();
     this.createWater();
     this.createBossWall();
-    this.createBridge();
+
     this.createEnemies();
+
+    this.createInteractive();
   }
 
   private createPlatforms() {
@@ -77,9 +87,18 @@ export class SceneFactory {
     this.create(xIndexes, 170, this.#platformFactory.createBossWall);
   }
 
-  private createBridge() {
+  private createInteractive() {
     let xIndexes = [16, 17, 18, 19];
-    this.create(xIndexes, 384, this.#platformFactory.createBridge);
+    this.createBridges(xIndexes);
+  }
+
+  private createBridges(xIndexes: number[]) {
+    for (let i of xIndexes) {
+      let bridge = this.#platformFactory.createBridge(this.#blockSize * i, 384);
+      bridge.setTarget(this.#target);
+      this.#platforms.push(bridge);
+      this.#entities.push(bridge);
+    }
   }
 
   private create(

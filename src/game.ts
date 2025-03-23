@@ -64,8 +64,10 @@ class Game {
 
     const sceneFactory = new SceneFactory(
       this.platforms,
+      this.entities,
       platformFactory,
-      enemyFactory
+      enemyFactory,
+      this.hero
     );
     sceneFactory.createScene();
 
@@ -160,7 +162,10 @@ class Game {
 
     for (let platform of this.platforms) {
       if (character instanceof Hero || character instanceof Runner) {
-        if (character.isJumpState() && platform.type !== EntityType.box) {
+        if (
+          (character.isJumpState() && platform.type !== EntityType.box) ||
+          !platform.isActive
+        ) {
           continue;
         }
         this.checkPlatformCollision(character, platform);

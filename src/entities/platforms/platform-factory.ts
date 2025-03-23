@@ -3,6 +3,7 @@ import { World } from "../../world";
 import { Graphics } from "pixi.js";
 import { PlatformView } from "./platform-view";
 import { EntityType } from "../entity-type";
+import { BridgePlatform } from "./bridge-platform";
 
 export class PlatformFactory {
   private platformWidth = 128;
@@ -136,7 +137,7 @@ export class PlatformFactory {
     return platform;
   }
 
-  createBridge(x: number, y: number): Platform {
+  createBridge(x: number, y: number): BridgePlatform {
     const skin = new Graphics();
     skin.setStrokeStyle({
       width: 2,
@@ -151,7 +152,7 @@ export class PlatformFactory {
     });
     view.addChild(skin);
 
-    const platform = new Platform(view);
+    const platform = new BridgePlatform(view);
     platform.x = x;
     platform.y = y;
     this.worldContainer.background.addChild(view);

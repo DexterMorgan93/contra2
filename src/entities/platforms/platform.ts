@@ -6,6 +6,8 @@ class Platform extends Entity<PlatformView> {
 
   constructor(view: PlatformView) {
     super(view);
+
+    this.isActive = true;
   }
 }
 
