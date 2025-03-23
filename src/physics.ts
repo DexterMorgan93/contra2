@@ -35,10 +35,7 @@ export class Physics {
   }
 
   // коллизия
-  static isCheckAABB(
-    entity: { x: number; y: number; width: number; height: number },
-    area: { x: number; y: number; width: number; height: number }
-  ) {
+  static isCheckAABB(entity: IRect, area: IRect) {
     return (
       entity.x < area.x + area.width &&
       entity.x + entity.width > area.x &&

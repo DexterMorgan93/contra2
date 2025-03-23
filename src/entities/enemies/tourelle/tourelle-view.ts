@@ -28,6 +28,9 @@ export class TourelleView extends EntityView {
 
     this.collisionBox.width = 100;
     this.collisionBox.height = 100;
+
+    this.setHitboxWidth(this.collisionBox.width);
+    this.setHitboxHeight(this.collisionBox.height);
   }
 
   get gunRotation() {

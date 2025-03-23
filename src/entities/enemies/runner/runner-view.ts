@@ -29,6 +29,9 @@ export class RunnerView extends EntityView {
     this.collisionBox.width = this.bounds.width;
     this.collisionBox.height = this.bounds.height;
 
+    this.setHitboxWidth(this.collisionBox.width);
+    this.setHitboxHeight(this.collisionBox.height);
+
     this.stateMachine = {
       currentstate: "default" as StateKeys,
       states: {

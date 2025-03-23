@@ -50,6 +50,9 @@ export class Entity<T extends EntityView = EntityView> {
   get collisionBox() {
     return this.view.collisionBox;
   }
+  get hitBox() {
+    return this.view.hitBox;
+  }
 
   removeFromStage() {
     if (this.view.parent) {

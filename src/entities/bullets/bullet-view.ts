@@ -16,5 +16,8 @@ export class BulletView extends EntityView {
     view.rect(0, 0, 5, 5);
     view.stroke();
     this.addChild(view);
+
+    this.setHitboxWidth(this.collisionBox.width);
+    this.setHitboxHeight(this.collisionBox.height);
   }
 }

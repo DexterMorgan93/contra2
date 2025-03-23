@@ -113,7 +113,7 @@ class Game {
     );
 
     for (const damager of damagers) {
-      if (Physics.isCheckAABB(damager.collisionBox, entity.collisionBox)) {
+      if (Physics.isCheckAABB(damager.hitBox, entity.hitBox)) {
         entity.damage();
         if (damager.type !== EntityType.enemy) {
           damager.dead();

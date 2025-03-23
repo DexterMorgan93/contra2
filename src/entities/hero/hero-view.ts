@@ -95,34 +95,74 @@ export class HeroView extends EntityView {
     this.toState("stay");
 
     this.setBulletPointShift(65, 30);
+
+    this.setHitboxWidth(20);
+    this.setHitboxHeight(90);
+    this.setHitboxShiftX(0);
+    this.setHitboxShiftY(0);
   }
   showStayUp() {
     this.toState("stayUp");
     this.setBulletPointShift(-2, -40);
+
+    this.setHitboxWidth(20);
+    this.setHitboxHeight(90);
+    this.setHitboxShiftX(0);
+    this.setHitboxShiftY(0);
   }
   showRun() {
     this.toState("run");
     this.setBulletPointShift(65, 30);
+
+    this.setHitboxWidth(20);
+    this.setHitboxHeight(90);
+    this.setHitboxShiftX(0);
+    this.setHitboxShiftY(0);
   }
   showRunUp() {
     this.toState("runUp");
     this.setBulletPointShift(40, -20);
+
+    this.setHitboxWidth(20);
+    this.setHitboxHeight(90);
+    this.setHitboxShiftX(0);
+    this.setHitboxShiftY(0);
   }
   showRunDown() {
     this.toState("runDown");
     this.setBulletPointShift(20, 55);
+
+    this.setHitboxWidth(20);
+    this.setHitboxHeight(90);
+    this.setHitboxShiftX(0);
+    this.setHitboxShiftY(0);
   }
   showLay() {
     this.toState("lay");
     this.setBulletPointShift(65, 70);
+
+    this.setHitboxWidth(90);
+    this.setHitboxHeight(20);
+    this.setHitboxShiftX(-45);
+    this.setHitboxShiftY(70);
   }
   showJump() {
     this.toState("jump");
     this.setBulletPointShift(-2, 40);
+
+    this.setHitboxWidth(40);
+    this.setHitboxHeight(40);
+    this.setHitboxShiftX(-10);
+    this.setHitboxShiftY(25);
   }
   showFall() {
     this.toState("fall");
     this.setBulletPointShift(65, 30);
+
+    this.setHitboxWidth(20);
+    this.setHitboxHeight(90);
+    this.setHitboxShiftX(0);
+    this.setHitboxShiftY(0);
   }
   flip(direction: number) {
     switch (direction) {
